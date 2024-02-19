@@ -1,8 +1,14 @@
+import secrets
+import string
+
+
 class Room:
     def __init__(self, name, capacity):
         self.name = name
         self.capacity = capacity
         self.users = []
+        # make a room id with a random string
+        self.id = generate_room_id(8)
 
     def add_user(self, user):
         if len(self.users) < self.capacity:
@@ -21,3 +27,10 @@ class Room:
 
     def get_capacity(self):
         return self.capacity
+
+
+def generate_room_id(length=8):
+    # Generate a secure random string of specified length
+    alphabet = string.ascii_letters + string.digits
+    room_id = ''.join(secrets.choice(alphabet) for i in range(length))
+    return room_id
