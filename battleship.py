@@ -1,38 +1,4 @@
-from enum import Enum, auto
-import random
-
-
-class ShipSize(Enum):
-    CARRIER = 5
-    BATTLESHIP = 4
-    SUBMARINE = 3
-    DESTROYER = 2
-
-
-class ShipRotation(Enum):
-    UP = 3
-    DOWN = 2
-    LEFT = 1
-    RIGHT = 0
-
-
-class Ship:
-
-    def __init__(self, name, size: ShipSize):
-        self.name = name
-        self.size = size
-        self.rotation = None
-        self.start_x = None
-        self.start_y = None
-
-    def set_rotation(self, rotation: ShipRotation):
-        self.rotation = rotation
-
-    def set_nose_location(self, x, y):
-        self.start_x = x
-        self.start_y = y
-
-
+from utils import BattleShipException, TileState, ShipRotation
 class Player:
 
     def __init__(self):
@@ -46,29 +12,15 @@ class Player:
         return self.ships
 
 
-class BattleShipException(Exception):
-    pass
-
-
-class TileState(Enum):
-    EMPTY = " "
-    EMPTY_MISS = "."
-    BOAT_HIT = "x"
-    CARRIER = "C"
-    BATTLESHIP = "B"
-    SUBMARINE1 = "S"
-    SUBMARINE2 = "s"
-    DESTROYER = "D"
-
-
 class BattleShip:
     def __init__(self):
-        self.current_player_turn = 0
+        self.current_player_turn = None
         self._board = [
             [[TileState.EMPTY for _ in range(10)] for _ in range(10)],
             [[TileState.EMPTY for _ in range(10)] for _ in range(10)]
         ]
         self.players = None
+        self.boats_placed = False
 
     def add_players(self, p1, p2):
         self.players = [p1, p2]
@@ -78,9 +30,9 @@ class BattleShip:
         p1_good = False
         p0_ships = self.players[0].place_ships()
         if self._validate_ships(p0_ships):
-            if self.place_ships(p0_ships, 0):
+            if self._place_ships(p0_ships, 0):
                 p0_good = True
-                print("p0_good")
+                # print("p0_good")
             else:
                 raise BattleShipException("Bad ship placements")
         else:
@@ -88,17 +40,21 @@ class BattleShip:
 
         p1_ships = self.players[1].place_ships()
         if self._validate_ships(p1_ships):
-            if self.place_ships(p1_ships, 1):
+            if self._place_ships(p1_ships, 1):
                 p1_good = True
-                print("p1_good")
+                # print("p1_good")
             else:
                 raise BattleShipException("Bad ship placements")
         else:
             raise BattleShipException("Bad ship format data")
         if p1_good and p0_good:
+            self.boats_placed = True
+            self.current_player_turn = 0
             return True
+        else:
+            raise BattleShipException("How did I get here?")
 
-    def place_ships(self, ship_dict, player_number):
+    def _place_ships(self, ship_dict, player_number):
         boats = {5: 1, 4: 1, 3: 2, 2: 1}
         for type_of_boat in boats.keys():
             type_of_boat = int(type_of_boat)
@@ -185,7 +141,7 @@ class BattleShip:
         return True
 
     def print_board(self, p):
-        print("*"*12)
+        print("*" * 12)
         for j in range(10):
             row = "*"
             for k in range(10):
@@ -205,9 +161,9 @@ class BattleShip:
                     row += "s"
                 if self._board[p][k][j] == TileState.DESTROYER:
                     row += "D"
-            row+="*"
+            row += "*"
             print(row)
-        print("*"*12)
+        print("*" * 12)
 
     def _validate_ships(self, ship_dict):
         ship_keys = {'x', 'y', 'rotation'}
@@ -276,41 +232,120 @@ class BattleShip:
                                                                                                             return True
         return False
 
-    def make_move(self, x, y):
+    def make_move(self, p, x, y):
+        """
+        0 = MISS , _
+        1 = HIT , _
+        2 = KILL, TYPE_of_BOAT (5 = carrier, 4 = battleship, 3 = sub1, 2 = sub2, 1 = destroyer)
+        :param p: attacking player int
+        :param x: coord
+        :param y: coord
+        :return:
+        """
         if x < 0 or x >= 10 or y < 0 or y >= 10:
-            return "Invalid coordinates."
+            raise BattleShipException("Invalid coordinates.")
+        target = None
+        if p == 0:
+            target = 1
+        elif p == 1:
+            target = 0
+        result = None
+        self.current_player_turn = target
+
+        current = [0, 0, 0, 0, 0]
+        after = [0, 0, 0, 0, 0]
+        for j in range(10):
+            for k in range(10):
+                if self._board[target][j][k] == TileState.CARRIER:
+                    current[4] += 1
+                if self._board[target][j][k] == TileState.BATTLESHIP:
+                    current[3] += 1
+                if self._board[target][j][k] == TileState.SUBMARINE2:
+                    current[2] += 1
+                if self._board[target][j][k] == TileState.SUBMARINE1:
+                    current[1] += 1
+                if self._board[target][j][k] == TileState.DESTROYER:
+                    current[0] += 1
+        # print(f"c {current}", end = " ")
+        ct = self._board[target][x][y]
+        if (
+                ct == TileState.CARRIER or
+                ct == TileState.BATTLESHIP or
+                ct == TileState.DESTROYER or
+                ct == TileState.SUBMARINE1 or
+                ct == TileState.SUBMARINE2 or
+                ct == TileState.BOAT_HIT
+        ):
+            self._board[target][x][y] = TileState.BOAT_HIT
+            result = 1, 0
+        elif (
+                ct == TileState.EMPTY or
+                ct == TileState.EMPTY_MISS
+        ):
+            self._board[target][x][y] = TileState.EMPTY_MISS
+            result = 0, 0
+        for j in range(10):
+            for k in range(10):
+                if self._board[target][j][k] == TileState.CARRIER:
+                    after[4] += 1
+                if self._board[target][j][k] == TileState.BATTLESHIP:
+                    after[3] += 1
+                if self._board[target][j][k] == TileState.SUBMARINE2:
+                    after[2] += 1
+                if self._board[target][j][k] == TileState.SUBMARINE1:
+                    after[1] += 1
+                if self._board[target][j][k] == TileState.DESTROYER:
+                    after[0] += 1
+        # print(f"after {after}",end = " ")
+        for i, _ in enumerate(current):
+            if _ != 0:
+                if _ != after[i] and after[i] == 0:
+                    result = 2, i
+                    # print("YES", end= " ")
+                    break
+        # print(result)
+        return result
 
     def check_game_over(self):
-        # @TODO DOUBLE CHECK THIS THIS LOGIC
-        """
-            EMPTY = " "
-            EMPTY_MISS = "."
-            BOAT_HIT = "x"
-            CARRIER = "C"
-            BATTLESHIP = "B"
-            SUBMARINE1 = "S"
-            SUBMARINE2 = "s"
-            DESTROYER = "D"
-        """
-        pass
+        # p0 check
+        p0_alive = False
+        for j in range(10):
+            for k in range(10):
+                ct = self._board[0][j][k]
+                if ct == TileState.EMPTY or ct == TileState.EMPTY_MISS or ct == TileState.BOAT_HIT:
+                    continue
+                else:
+                    p0_alive = True
+                    break
+            if p0_alive:
+                break
+        # p1 check
+        p1_alive = False
+        for j in range(10):
+            for k in range(10):
+                ct = self._board[1][j][k]
+                if ct == TileState.EMPTY or ct == TileState.EMPTY_MISS or ct == TileState.BOAT_HIT:
+                    continue
+                else:
+                    p1_alive = True
+                    break
+            if p1_alive:
+                break
+        return p0_alive, p1_alive
 
-    def main(self):
-        # place_ships
-        #  - validate ship placement
-        # loop
-        # - give players the boards
-        # - player 0 goes shoots at player 1
-        # - give players the boards
-        # - player 1 goes shoots at player 0
-        # - check if game is over if yes, break
-        # notify each player of score
-        pass
+    def get_status(self):
+        p0_alive, p1_alive = self.check_game_over()
+        return {
+            "placed": self.boats_placed,
+            "cplayer": self.current_player_turn,
+            "p0_alive": p0_alive,
+            "p1_alive": p1_alive
+        }
 
 
 # Example usage:
 if __name__ == "__main__":
     b = BattleShip()
-
     a = Player()
     a.set_ships({
         5: [{
@@ -372,6 +407,32 @@ if __name__ == "__main__":
             "rotation": ShipRotation.LEFT,
         }]
     })
-    b.add_players(a,f)
+    b.add_players(a, f)
     b.validate_and_place_ships()
     b.print_board(1)
+    b.make_move(0, 0, 6)
+    # carrier
+    b.make_move(0, 0, 0)
+    b.make_move(0, 0, 1)
+    b.make_move(0, 0, 2)
+    b.make_move(0, 0, 3)
+    b.make_move(0, 0, 4)
+    # battleship
+    b.make_move(0, 9, 0)
+    b.make_move(0, 9, 1)
+    b.make_move(0, 9, 2)
+    b.make_move(0, 9, 3)
+    # sub1
+    b.make_move(0, 0, 9)
+    b.make_move(0, 0, 8)
+    b.make_move(0, 0, 7)
+    # sub2
+    b.make_move(0, 4, 4)
+    b.make_move(0, 5, 4)
+    b.make_move(0, 6, 4)
+    # destroyer
+    b.make_move(0, 8, 9)
+    b.make_move(0, 9, 9)
+
+    b.print_board(1)
+    print(b.check_game_over())
