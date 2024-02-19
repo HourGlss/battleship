@@ -11,9 +11,18 @@ class Manager:
     def remove_room(self, room):
         self.rooms.remove(room)
 
-    def add_user_to_room(self, room, user, id):
-        if room.id == id:
-            room.add_user(user)
+    def add_user_to_room(self, user, room_id):
+        for room in self.rooms:
+            if room.id == room_id:
+                room.add_user(user)
 
-    def remove_user_from_room(self, room, user):
-        room.remove_user(user)
+    def remove_user_from_room(self, user, room_id):
+        for room in self.rooms:
+            if room.id == room_id:
+                room.remove_user(user)
+
+    def get_room(self, room_id):
+        for room in self.rooms:
+            if room.id == room_id:
+                return room
+        return None

@@ -1,21 +1,33 @@
 from enum import Enum
-from typing import TypedDict, List
+from typing import TypedDict, List, Dict
 
 
 class ShipRotation(Enum):
-    LEFT = "LEFT"
-    DOWN = "DOWN"
+    UP = 3
+    DOWN = 2
+    LEFT = 1
+    RIGHT = 0
+
 
 class ShipPosition(TypedDict):
     x: int
     y: int
     rotation: ShipRotation
 
-class ShipsConfig(TypedDict):
-    5: List[ShipPosition]
-    4: List[ShipPosition]
-    3: List[ShipPosition]
-    2: List[ShipPosition]
+
+class ShipSize(Enum):
+    CARRIER = 5
+    BATTLESHIP = 4
+    SUBMARINE = 3
+    DESTROYER = 2
+
+
+class ShipsConfig(TypedDict, total=False):  # 'total=False' allows missing keys
+    CARRIER: List[ShipPosition]
+    BATTLESHIP: List[ShipPosition]
+    SUBMARINE: List[ShipPosition]
+    DESTROYER: List[ShipPosition]
+
 
 class User:
     def __init__(self, name, number, public_key):
@@ -23,7 +35,12 @@ class User:
         self.number = number
         self.public_key = public_key
         self.open_to_play = "false"
-        self.ships: dict[int, list[dict[s]]] = {}
+        self.ships: Dict[ShipSize, List[ShipPosition]] = {
+            ShipSize.CARRIER: [],
+            ShipSize.BATTLESHIP: [],
+            ShipSize.SUBMARINE: [],
+            ShipSize.DESTROYER: []
+        }
 
     def __str__(self):
         return f"{self.name} "

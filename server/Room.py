@@ -3,7 +3,7 @@ import string
 
 
 class Room:
-    def __init__(self, name, capacity):
+    def __init__(self, name, capacity: int):
         self.name = name
         self.capacity = capacity
         self.users = []
@@ -27,6 +27,11 @@ class Room:
 
     def get_capacity(self):
         return self.capacity
+
+    def set_ships(self, user, ships):
+        for u in self.users:
+            if u.name == user.name:
+                u.set_ships(ships)
 
 
 def generate_room_id(length=8):
