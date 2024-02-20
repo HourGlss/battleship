@@ -15,15 +15,15 @@ def register_user(name, number):
     assert response.status_code == 200
 
 
-def create_game():
-    data = {
-        "username": "testuser"
-    }
-    response = requests.post(f"{url}/hostgame", json=data)
-    print(response.json())
-    room_id = response.json()["room_id"]
-    assert response.status_code == 200
-    return room_id
+def create_players(players):
+    gameIDs = []
+    for player in players:
+        register_user(player, 1000000000 + players.index(player))
+        response = requests.post(f"{url}/set_open_to_play", json={"username": f"{player}", "open_to_play": "true"})
+        if response:
+            print(response.json())
+            gameIDs.extend([x.split(" ")[3].strip("ID:") for x in response.json()["message"].split("\n") if x])
+    return gameIDs
 
 
 def set_ships_for_player(player, id, ships):
@@ -53,68 +53,40 @@ def get_status(room_id):
 
 
 if __name__ == "__main__":
-    register_user("testuser", 1000000000)
-    register_user("testuser1", 1000000001)
-    gameID = create_game()
-
-    time.sleep(1)
-    set_ships_for_player("testuser", gameID, {
-        "CARRIER": [{
-            "x": 9,
-            "y": 9,
-            "rotation": "LEFT"
-        }],
-        "BATTLESHIP": [{
-            "x": 1,
-            "y": 1,
-            "rotation": "DOWN"
-        }],
-        "SUBMARINE": [
-            {
-                "x": 2,
+    players = ["testuser", "testuser1", "testuser2"]
+    gameIDs = create_players(players)
+    print(f"GameIDs:{gameIDs}")
+    for player in players:
+        for gameID in gameIDs:
+            set_ships_for_player(player, gameID, {
+            "CARRIER": [{
+                "x": 9,
+                "y": 9,
+                "rotation": "LEFT"
+            }],
+            "BATTLESHIP": [{
+                "x": 1,
                 "y": 1,
                 "rotation": "DOWN"
-            },
-            {
-                "x": 3,
+            }],
+            "SUBMARINE": [
+                {
+                    "x": 2,
+                    "y": 1,
+                    "rotation": "DOWN"
+                },
+                {
+                    "x": 3,
+                    "y": 1,
+                    "rotation": "DOWN"
+                }
+            ],
+            "DESTROYER": [{
+                "x": 4,
                 "y": 1,
                 "rotation": "DOWN"
-            }
-        ],
-        "DESTROYER": [{
-            "x": 4,
-            "y": 1,
-            "rotation": "DOWN"
-        }]
-    })
-    set_ships_for_player("testuser1", gameID, {
-        "CARRIER": [{
-            "x": 9,
-            "y": 9,
-            "rotation": "LEFT"
-        }],
-        "BATTLESHIP": [{
-            "x": 1,
-            "y": 1,
-            "rotation": "DOWN"
-        }],
-        "SUBMARINE": [
-            {
-                "x": 2,
-                "y": 1,
-                "rotation": "DOWN"
-            },
-            {
-                "x": 3,
-                "y": 1,
-                "rotation": "DOWN"
-            }
-        ],
-        "DESTROYER": [{
-            "x": 4,
-            "y": 1,
-            "rotation": "DOWN"
-        }]
-    })
-    get_status(gameID)
+            }]
+        })
+    for gameID in gameIDs:
+        get_status(gameID)
 

@@ -89,7 +89,8 @@ def set_open_to_play():
     if username in registered_users:
         # Assuming you have a way to update the open_to_play status in your user object
         registered_users[username].open_to_play = open_to_play
-        return jsonify({'message': f"User {username}'s open to play status updated to {open_to_play}"}), 200
+        msg = manager.create_games_for_open_players(registered_users)
+        return jsonify({'message': f"{msg}"}), 200
     else:
         return jsonify({'error': 'User not found'}), 404
 
