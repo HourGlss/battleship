@@ -1,12 +1,6 @@
 from enum import Enum
 from typing import TypedDict, List, Dict
-
-
-class ShipRotation(Enum):
-    UP = 3
-    DOWN = 2
-    LEFT = 1
-    RIGHT = 0
+from utils import ShipRotation
 
 
 class ShipPosition(TypedDict):

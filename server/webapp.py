@@ -5,6 +5,7 @@ import json
 from User import User
 from server.Manager import Manager
 from server.Room import Room
+from utils import ShipRotation
 
 app = Flask(__name__)
 
@@ -100,18 +101,18 @@ def host_game():
     else:
         data = request.json
         print(data)
-        if 'username' not in data or 'room_name' not in data or 'capacity' not in data:
+        if 'username' not in data:
             return jsonify({'error': 'Missing username, room_name, or capacity parameter'}), 400
         username = data['username'].lower()
-        room_name = data['room_name']
-        capacity = data['capacity']
         if username in registered_users:
             # Assuming you have a way to create a room and add it to your manager
-            room = Room(room_name, capacity)
+            room = Room()
             manager.add_room(room)
             manager.add_user_to_room(registered_users[username], room.id)
             return jsonify({
-                'message': f"User {username} has created a room {room_name} with capacity {capacity} and room id {room.id}"}), 200
+                'message': f"User {username} has created a room {room.name} and room id {room.id}",
+                'room_id': room.id
+            }), 200
         else:
             return jsonify({'error': 'User not found'}), 404
 
@@ -153,19 +154,48 @@ def get_users_in_room(room_id):
     else:
         return jsonify({'error': 'Room not found'}), 404
 
-@app.route("/<room_id>/set_ships", methods=["GET"])
+
+@app.route("/<room_id>/set_ships", methods=["POST"])
 def set_ships(room_id):
     data = request.json
     if 'username' not in data or 'ships' not in data:
         return jsonify({'error': 'Missing username or ships parameter'}), 400
     username = data['username'].lower()
-    ships = data['ships']
+
+    # Mapping of ship names to their sizes (as integers)
+    ship_name_to_size = {
+        "CARRIER": 5,
+        "BATTLESHIP": 4,
+        "SUBMARINE": 3,
+        "DESTROYER": 2
+    }
+    # Convert the ship names to integers and the rotation strings to ShipRotation enums
+    converted_ships = {}
+    for name, positions in data["ships"].items():
+        size = ship_name_to_size[name]
+        converted_positions = []
+        for pos in positions:
+            # Convert the rotation string to the corresponding ShipRotation enum
+            rotation_enum = ShipRotation[pos["rotation"]]
+            pos["rotation"] = rotation_enum
+            converted_positions.append(pos)
+        converted_ships[size] = converted_positions
+
     if username in registered_users:
         # Assuming you have a way to set ships for a user in a room in your manager
-        manager.get_room(room_id).set_ships(registered_users[username], ships)
-        return jsonify({'message': f"User {username} has set ships in room {room_id}"}), 200
+        manager.get_room(room_id).set_ships(registered_users[username], converted_ships)
+        return jsonify({'message': f"room {room_id}: User {username} set ships {converted_ships}"}), 200
     else:
         return jsonify({'error': 'User not found'}), 404
+
+
+@app.route("/<room_id>/get_status", methods=["GET"])
+def get_status(room_id):
+    room = manager.get_room(room_id)
+    if room:
+        return jsonify({'status': room.battleship.get_status()}), 200
+    else:
+        return jsonify({'error': 'Room not found'}), 404
 
 
 if __name__ == '__main__':

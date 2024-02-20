@@ -1,19 +1,24 @@
 import secrets
 import string
-
+import datetime
+from battleship import BattleShip
 
 class Room:
-    def __init__(self, name, capacity: int):
-        self.name = name
-        self.capacity = capacity
+    def __init__(self):
+        self.name = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.capacity = 2
         self.users = []
         # make a room id with a random string
         self.id = generate_room_id(8)
+        self.battleship = BattleShip()
 
     def add_user(self, user):
         if len(self.users) < self.capacity:
             self.users.append(user)
             return True
+        if len(self.users) == self.capacity:
+            self.battleship.add_players(self.users[0], self.users[1])
+            self.battleship.validate_and_place_ships()
         return False
 
     def remove_user(self, user):
@@ -24,9 +29,6 @@ class Room:
 
     def get_name(self):
         return self.name
-
-    def get_capacity(self):
-        return self.capacity
 
     def set_ships(self, user, ships):
         for u in self.users:
