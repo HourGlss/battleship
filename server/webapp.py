@@ -215,5 +215,20 @@ def list_rooms():
         ret += f"Room ID: {room.id}, Users: {[user.name for user in room.get_users()]}\n"
     return jsonify({"message": ret}), 200
 
+@app.route("/<room_id>/attack", methods=["POST"])
+def attack(room_id):
+    data = request.json
+    if 'username' not in data or 'x' not in data or 'y' not in data:
+        return jsonify({'error': 'Missing username, x, or y parameter'}), 400
+    username = data['username'].lower()
+    x = data['x']
+    y = data['y']
+    if username in registered_users:
+        # Assuming you have a way to attack a user in a room in your manager
+        result = manager.get_room(room_id).attack(registered_users[username].name, x, y)
+        return jsonify({'message': f"room {room_id}: User {username} attacked {x}, {y} and {result}"}), 200
+    else:
+        return jsonify({'error': 'User not found'}), 404
+
 if __name__ == '__main__':
     app.run(port=9999)

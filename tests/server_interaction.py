@@ -2,7 +2,7 @@ import time
 
 import requests
 
-url = "http://127.0.0.1:9999"
+url = "http://127.0.0.1:5000"
 
 # ships = {
 #             "CARRIER": [{
@@ -113,10 +113,20 @@ def get_status(room_id):
     assert response.status_code == 200
     return response.json()
 
+def attack(room_id, username, x, y):
+    data = {
+        "username": username,
+        "x": x,
+        "y": y
+    }
+    response = requests.post(f"{url}/{room_id}/attack", json=data)
+    print(response.json())
+    assert response.status_code == 200
+    return response.json()
+
 
 if __name__ == "__main__":
-    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4", "testuser5", "testuser6", "testuser7",
-               "testuser8", "testuser9"]
+    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4"]
     # players = ["testuser", "testuser1"]
     gameIDs = create_players(players)
     print(f"GameIDs:{gameIDs}")
@@ -127,6 +137,22 @@ if __name__ == "__main__":
         for player in users:
             if player in players:  # Check if the player is in the list of players we're considering
                 set_ships_for_player(player, gameID, ships)
+
+    for gameID in gameIDs:
+        get_status(gameID)
+
+    for gameID in gameIDs:
+        users = requests.get(f"{url}/{gameID}/users").json()["users"]
+        grid = ((0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+                (1, 0), (1, 1), (1, 2), (1, 3), (1, 4),
+                (2, 0), (2, 1), (2, 2), (2, 3), (2, 4),
+                (3, 0), (3, 1), (3, 2), (3, 3), (3, 4),
+                (4, 0), (4, 1), (4, 2), (4, 3), (4, 4))
+        for index in grid:
+            for player in users:
+                response = attack(gameID, player, index[0], index[1])
+                print(get_status(gameID))
+                print(response)
 
     for gameID in gameIDs:
         get_status(gameID)
