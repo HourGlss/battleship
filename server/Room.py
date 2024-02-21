@@ -12,6 +12,7 @@ class Room:
         # make a room id with a random string
         self.id = generate_room_id(8)
         self.battleship = BattleShip()
+        self.validated = False
 
     def add_user(self, user):
         if len(self.users) < self.capacity:
@@ -40,15 +41,18 @@ class Room:
 
 
     def verify_ships(self):
-        if self.users[0].ships and self.users[1].ships:
-            player1 = Player(self.users[0])
-            player2 = Player(self.users[1])
-            player1.set_ships(self.users[0].ships)
-            player2.set_ships(self.users[1].ships)
-            print(player1.ships)
-            print(player2.ships)
-            self.battleship.add_players(player1, player2)
-            self.battleship.validate_and_place_ships()
+        if not self.validated:
+            if self.users[0].ships and self.users[1].ships:
+                print("Verifying ships for room: ", self.id)
+                player1 = Player(self.users[0])
+                player2 = Player(self.users[1])
+                player1.set_ships(self.users[0].ships)
+                player2.set_ships(self.users[1].ships)
+                print(player1.ships)
+                print(player2.ships)
+                self.battleship.add_players(player1, player2)
+                self.battleship.validate_and_place_ships()
+                self.validated = True
 
     def has_players(self, player1, player2):
         return player1 in self.users and player2 in self.users

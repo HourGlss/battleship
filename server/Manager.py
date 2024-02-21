@@ -46,7 +46,7 @@ class Manager:
                         self.add_room(room)
                         self.add_user_to_room(player1, room.id)
                         self.add_user_to_room(player2, room.id)
-                        ret += f"Created room with ID:{room.id} and players {player1.name} and {player2.name}\n"
+                        ret += f"Created room with ID: {room.id} and players {player1.name} and {player2.name}\n"
                         print(f"Created room {room.id} with players {player1.name} and {player2.name}")
                     else:
                         pass
