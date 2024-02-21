@@ -30,10 +30,6 @@ class User:
         self.public_key = public_key
         self.open_to_play = "false"
         self.ships: Dict[ShipSize, List[ShipPosition]] = {
-            ShipSize.CARRIER: [],
-            ShipSize.BATTLESHIP: [],
-            ShipSize.SUBMARINE: [],
-            ShipSize.DESTROYER: []
         }
 
     def __str__(self):

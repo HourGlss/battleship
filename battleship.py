@@ -1,7 +1,8 @@
 from utils import BattleShipException, TileState, ShipRotation
 class Player:
 
-    def __init__(self):
+    def __init__(self, user):
+        self.user = user
         self.shots = 0
         self.ships = {}
 
@@ -345,7 +346,6 @@ class BattleShip:
             "cplayer": self.current_player_turn,
             "p0_alive": p0_alive,
             "p1_alive": p1_alive,
-            "players": self.players
         }
 
 

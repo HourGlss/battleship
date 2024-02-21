@@ -4,35 +4,65 @@ import requests
 
 url = "http://127.0.0.1:9999"
 
+# ships = {
+#             "CARRIER": [{
+#                 "x": 9,
+#                 "y": 9,
+#                 "rotation": "LEFT"
+#             }],
+#             "BATTLESHIP": [{
+#                 "x": 1,
+#                 "y": 1,
+#                 "rotation": "DOWN"
+#             }],
+#             "SUBMARINE": [
+#                 {
+#                     "x": 2,
+#                     "y": 1,
+#                     "rotation": "DOWN"
+#                 },
+#                 {
+#                     "x": 3,
+#                     "y": 1,
+#                     "rotation": "DOWN"
+#                 }
+#             ],
+#             "DESTROYER": [{
+#                 "x": 4,
+#                 "y": 1,
+#                 "rotation": "DOWN"
+#             }]
+#         }
+
 ships = {
-            "CARRIER": [{
-                "x": 9,
-                "y": 9,
-                "rotation": "LEFT"
-            }],
-            "BATTLESHIP": [{
-                "x": 1,
-                "y": 1,
-                "rotation": "DOWN"
-            }],
-            "SUBMARINE": [
-                {
-                    "x": 2,
-                    "y": 1,
-                    "rotation": "DOWN"
-                },
-                {
-                    "x": 3,
-                    "y": 1,
-                    "rotation": "DOWN"
-                }
-            ],
-            "DESTROYER": [{
+        "CARRIER": [{
+            "x": 0,
+            "y": 0,
+            "rotation": "DOWN",
+        }],
+        "BATTLESHIP": [{
+            "x": 9,
+            "y": 0,
+            "rotation": "DOWN",
+        }],
+        "SUBMARINE": [
+            {
                 "x": 4,
-                "y": 1,
-                "rotation": "DOWN"
-            }]
-        }
+                "y": 4,
+                "rotation": "RIGHT",
+            },
+            {
+                "x": 0,
+                "y": 9,
+                "rotation": "UP",
+            }
+        ],
+        "DESTROYER": [{
+            "x": 9,
+            "y": 9,
+            "rotation": "LEFT",
+        }]
+    }
 
 
 def register_user(name, number):
@@ -83,7 +113,8 @@ def get_status(room_id):
 
 
 if __name__ == "__main__":
-    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4", "testuser5"]
+    # players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4", "testuser5"]
+    players = ["testuser", "testuser1"]
     gameIDs = create_players(players)
     print(f"GameIDs:{gameIDs}")
     #for each game if player in the game set the ships

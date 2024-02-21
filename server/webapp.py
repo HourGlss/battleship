@@ -173,12 +173,19 @@ def set_ships(room_id):
     }
     # Convert the ship names to integers and the rotation strings to ShipRotation enums
     converted_ships = {}
+    rotation_mapping = {
+        "UP": ShipRotation.UP,
+        "DOWN": ShipRotation.DOWN,
+        "LEFT": ShipRotation.LEFT,
+        "RIGHT": ShipRotation.RIGHT
+    }
+
     for name, positions in data["ships"].items():
         size = ship_name_to_size[name]
         converted_positions = []
         for pos in positions:
-            # Convert the rotation string to the corresponding ShipRotation enum
-            rotation_enum = ShipRotation[pos["rotation"]]
+            # Convert the rotation string to the corresponding ShipRotation enum value
+            rotation_enum = rotation_mapping[pos["rotation"]]
             pos["rotation"] = rotation_enum
             converted_positions.append(pos)
         converted_ships[size] = converted_positions
@@ -195,7 +202,9 @@ def set_ships(room_id):
 def get_status(room_id):
     room = manager.get_room(room_id)
     if room:
-        return jsonify({'status': room.battleship.get_status()}), 200
+        status = room.battleship.get_status()
+        status
+        return jsonify({'status': status}), 200
     else:
         return jsonify({'error': 'Room not found'}), 404
 
