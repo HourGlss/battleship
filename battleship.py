@@ -25,6 +25,11 @@ class BattleShip:
     def add_players(self, p1, p2):
         self.players = [p1, p2]
 
+    def has_player(self, player):
+        if self.players is None:
+            return False
+        return player in self.players
+
     def validate_and_place_ships(self):
         p0_good = False
         p1_good = False
@@ -339,7 +344,8 @@ class BattleShip:
             "placed": self.boats_placed,
             "cplayer": self.current_player_turn,
             "p0_alive": p0_alive,
-            "p1_alive": p1_alive
+            "p1_alive": p1_alive,
+            "players": self.players
         }
 
 

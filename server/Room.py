@@ -27,6 +27,7 @@ class Room:
     def get_users(self):
         return self.users
 
+
     def get_name(self):
         return self.name
 
@@ -34,6 +35,9 @@ class Room:
         for u in self.users:
             if u.name == user.name:
                 u.set_ships(ships)
+
+    def has_players(self, player1, player2):
+        return player1 in self.users and player2 in self.users
 
 
 def generate_room_id(length=8):

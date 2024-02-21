@@ -89,6 +89,7 @@ def set_open_to_play():
     if username in registered_users:
         # Assuming you have a way to update the open_to_play status in your user object
         registered_users[username].open_to_play = open_to_play
+        print(len(registered_users))
         msg = manager.create_games_for_open_players(registered_users)
         return jsonify({'message': f"{msg}"}), 200
     else:
@@ -198,6 +199,12 @@ def get_status(room_id):
     else:
         return jsonify({'error': 'Room not found'}), 404
 
+@app.route("/rooms", methods=["GET"])
+def list_rooms():
+    ret = ""
+    for room in manager.rooms:
+        ret += f"Room ID: {room.id}, Users: {[user.name for user in room.get_users()]}\n"
+    return jsonify({"message": ret}), 200
 
 if __name__ == '__main__':
     app.run(port=9999)

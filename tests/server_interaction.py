@@ -2,7 +2,37 @@ import time
 
 import requests
 
-url = "http://127.0.0.1:5000"
+url = "http://127.0.0.1:9999"
+
+ships = {
+            "CARRIER": [{
+                "x": 9,
+                "y": 9,
+                "rotation": "LEFT"
+            }],
+            "BATTLESHIP": [{
+                "x": 1,
+                "y": 1,
+                "rotation": "DOWN"
+            }],
+            "SUBMARINE": [
+                {
+                    "x": 2,
+                    "y": 1,
+                    "rotation": "DOWN"
+                },
+                {
+                    "x": 3,
+                    "y": 1,
+                    "rotation": "DOWN"
+                }
+            ],
+            "DESTROYER": [{
+                "x": 4,
+                "y": 1,
+                "rotation": "DOWN"
+            }]
+        }
 
 
 def register_user(name, number):
@@ -53,40 +83,17 @@ def get_status(room_id):
 
 
 if __name__ == "__main__":
-    players = ["testuser", "testuser1", "testuser2"]
+    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4", "testuser5"]
     gameIDs = create_players(players)
     print(f"GameIDs:{gameIDs}")
-    for player in players:
-        for gameID in gameIDs:
-            set_ships_for_player(player, gameID, {
-            "CARRIER": [{
-                "x": 9,
-                "y": 9,
-                "rotation": "LEFT"
-            }],
-            "BATTLESHIP": [{
-                "x": 1,
-                "y": 1,
-                "rotation": "DOWN"
-            }],
-            "SUBMARINE": [
-                {
-                    "x": 2,
-                    "y": 1,
-                    "rotation": "DOWN"
-                },
-                {
-                    "x": 3,
-                    "y": 1,
-                    "rotation": "DOWN"
-                }
-            ],
-            "DESTROYER": [{
-                "x": 4,
-                "y": 1,
-                "rotation": "DOWN"
-            }]
-        })
+    #for each game if player in the game set the ships
+    # Set ships for each player in each game
+    for gameID in gameIDs:
+        users = requests.get(f"{url}/{gameID}/users").json()["users"]
+        for player in users:
+            if player in players:  # Check if the player is in the list of players we're considering
+                set_ships_for_player(player, gameID, ships)
+
     for gameID in gameIDs:
         get_status(gameID)
 
