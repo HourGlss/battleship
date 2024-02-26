@@ -126,7 +126,7 @@ def attack(room_id, username, x, y):
 
 
 if __name__ == "__main__":
-    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4"]
+    players = ["testuser", "testuser1", "testuser2", "testuser3", "testuser4", "testuser5"]
     # players = ["testuser", "testuser1"]
     gameIDs = create_players(players)
     print(f"GameIDs:{gameIDs}")

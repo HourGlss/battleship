@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
+from battleship import create_app, socketio
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 import json
@@ -7,7 +8,6 @@ from server.Manager import Manager
 from server.Room import Room
 from utils import ShipRotation
 
-app = Flask(__name__)
 
 # A dictionary to store registered users' data (in memory, not persistent)
 registered_users: dict[str, User] = {}
@@ -29,38 +29,50 @@ def remove_user_from_register(username: str):
     registered_users.pop(username.lower())
 
 
-@app.route('/register', methods=['POST', 'GET'])
+# @app.route('/register', methods=['POST', 'GET'])
+# def register():
+#
+#     data = {}
+#     try:
+#         if request.method == 'GET':
+#             data = request.args
+#             for k, v in data.items():
+#                 print(f"{k}: {v}")
+#         else:
+#             data = request.json
+#             for k, v in data.items():
+#                 print(f"{k}: {v}")
+#
+#     except:
+#         print("triple fail")
+#
+#     if 'username' not in data.keys() or 'number' not in data.keys():
+#         return jsonify({'error': 'Missing username or number parameter'}), 400
+#
+#     username = data['username']
+#     number = int(data['number'])
+#
+#     # Checking if the number is within the specified range
+#     if not (100_000_0000 <= number <= 999_999_9999):
+#         return jsonify({'error': 'Number should be between 1000000000 and 9999999999'}), 400
+#     if username in registered_users.keys():
+#         if registered_users[username]['number'] == number:
+#             remove_user_from_register(username)
+#     prkey, pubkey = gen_pub_priv()
+#     add_user_to_register(username, number, pubkey)
+#     return jsonify({'private_key': prkey.export_key().decode('utf-8')}), 200
+
+@app.route('/register', methods=['POST'])
 def register():
-    data = {}
-    try:
-        if request.method == 'GET':
-            data = request.args
-            for k, v in data.items():
-                print(f"{k}: {v}")
-        else:
-            data = request.json
-            for k, v in data.items():
-                print(f"{k}: {v}")
-
-    except:
-        print("triple fail")
-
-    if 'username' not in data.keys() or 'number' not in data.keys():
-        return jsonify({'error': 'Missing username or number parameter'}), 400
-
+    return render_template('register.html')
+@socketio.on('register')
+def register(data):
+    print(data)
     username = data['username']
-    number = int(data['number'])
-
-    # Checking if the number is within the specified range
-    if not (100_000_0000 <= number <= 999_999_9999):
-        return jsonify({'error': 'Number should be between 1000000000 and 9999999999'}), 400
-    if username in registered_users.keys():
-        if registered_users[username]['number'] == number:
-            remove_user_from_register(username)
+    number = data['number']
     prkey, pubkey = gen_pub_priv()
     add_user_to_register(username, number, pubkey)
-    return jsonify({'private_key': prkey.export_key().decode('utf-8')}), 200
-
+    send({'private_key': prkey.export_key().decode('utf-8')}, json=True)
 
 @app.route('/listusers', methods=['GET'])
 def list_users():
@@ -231,4 +243,4 @@ def attack(room_id):
         return jsonify({'error': 'User not found'}), 404
 
 if __name__ == '__main__':
-    app.run(port=9999)
+    socketio.run(app, port=9999)
