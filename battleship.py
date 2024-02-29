@@ -165,72 +165,7 @@ class BattleShip:
             print(row)
         print("*" * 12)
 
-    def _validate_ships(self, ship_dict):
-        ship_keys = {'x', 'y', 'rotation'}
-        #
-        # "Oh my god, there's a better way. Uncle bob is rolling in his grave." - Fleshy upon viewing this code
-        #
-        # Overall scheme
-        if isinstance(ship_dict, dict):
-            if list(ship_dict.keys()) == [5, 4, 3, 2]:
-                # carrier
-                if len(ship_dict[5]) == 1:
-                    if set(ship_dict[5][0].keys()) == ship_keys:
-                        if isinstance(ship_dict[5][0]['x'], int) and 0 <= ship_dict[5][0]['x'] <= 9:
-                            if isinstance(ship_dict[5][0]['y'], int) and 0 <= ship_dict[5][0]['y'] <= 9:
-                                if isinstance(ship_dict[5][0]['rotation'], ShipRotation):
-                                    # battleship
-                                    if len(ship_dict[4]) == 1:
-                                        if set(ship_dict[4][0].keys()) == ship_keys:
-                                            if isinstance(ship_dict[4][0]['x'], int) and 0 <= ship_dict[4][0]['x'] <= 9:
-                                                if isinstance(ship_dict[4][0]['y'], int) and 0 <= ship_dict[4][0][
-                                                    'y'] <= 9:
-                                                    if isinstance(ship_dict[4][0]['rotation'], ShipRotation):
-                                                        if len(ship_dict[3]) == 2:
-                                                            if set(ship_dict[3][0].keys()) == ship_keys and set(
-                                                                    ship_dict[3][1].keys()) == ship_keys:
-                                                                # submarines
-                                                                if isinstance(ship_dict[3][0]['x'], int) and 0 <= \
-                                                                        ship_dict[3][0]['x'] <= 9:
-                                                                    if isinstance(ship_dict[3][0]['y'], int) and 0 <= \
-                                                                            ship_dict[3][0]['y'] <= 9:
-                                                                        if isinstance(ship_dict[3][0]['rotation'],
-                                                                                      ShipRotation):
-                                                                            if isinstance(ship_dict[3][1]['x'],
-                                                                                          int) and 0 <= ship_dict[3][1][
-                                                                                'x'] <= 9:
-                                                                                if isinstance(ship_dict[3][1]['y'],
-                                                                                              int) and 0 <= \
-                                                                                        ship_dict[3][1]['y'] <= 9:
-                                                                                    if isinstance(
-                                                                                            ship_dict[3][1]['rotation'],
-                                                                                            ShipRotation):
-                                                                                        if len(ship_dict[2]) == 1:
-                                                                                            if set(ship_dict[2][
-                                                                                                       0].keys()) == ship_keys:
-                                                                                                # destroyer
-                                                                                                if isinstance(
-                                                                                                        ship_dict[2][0][
-                                                                                                            'x'],
-                                                                                                        int) and 0 <= \
-                                                                                                        ship_dict[2][0][
-                                                                                                            'x'] <= 9:
-                                                                                                    if isinstance(
-                                                                                                            ship_dict[
-                                                                                                                2][0][
-                                                                                                                'y'],
-                                                                                                            int) and 0 <= \
-                                                                                                            ship_dict[
-                                                                                                                2][0][
-                                                                                                                'y'] <= 9:
-                                                                                                        if isinstance(
-                                                                                                                ship_dict[
-                                                                                                                    2][
-                                                                                                                    0][
-                                                                                                                    'rotation'],
-                                                                                                                ShipRotation):
-                                                                                                            return True
-        return False
+
 
     def make_move(self, p, x, y):
         """
@@ -343,6 +278,25 @@ class BattleShip:
         }
 
 
+    def _validate_ships(self, ship_dict):
+        ship_keys = {'x', 'y', 'rotation'}
+        if not isinstance(ship_dict, dict):
+            return False
+        if set(ship_dict.keys()) != {2, 3, 4, 5}:
+            return False
+        if len(ship_dict[3]) != 2:
+            return False
+        for size in ship_dict.keys():
+            ships = ship_dict[size]
+            for ship in ships:
+                if not isinstance(ship, dict) or set(ship.keys()) != ship_keys:
+                    return False
+                if not all(isinstance(ship[key], int) and 0 <= ship[key] <= 9 for key in ['x', 'y']):
+                    return False
+                if not isinstance(ship['rotation'], ShipRotation):
+                    return False
+        return True
+
 # Example usage:
 if __name__ == "__main__":
     b = BattleShip()
@@ -366,7 +320,7 @@ if __name__ == "__main__":
             },
             {
                 "x": 3,
-                "y": 1,
+                "y": 2,
                 "rotation": ShipRotation.DOWN,
             }
         ],
@@ -391,20 +345,20 @@ if __name__ == "__main__":
         }],
         3: [
             {
-                "x": 4,
-                "y": 4,
-                "rotation": ShipRotation.RIGHT,
+                "x": 8,
+                "y": 0,
+                "rotation": ShipRotation.DOWN,
             },
             {
-                "x": 0,
-                "y": 9,
-                "rotation": ShipRotation.UP,
+                "x": 7,
+                "y": 0,
+                "rotation": ShipRotation.DOWN,
             }
         ],
         2: [{
-            "x": 9,
-            "y": 9,
-            "rotation": ShipRotation.LEFT,
+            "x": 6,
+            "y": 0,
+            "rotation": ShipRotation.DOWN,
         }]
     })
     b.add_players(a, f)
@@ -433,6 +387,6 @@ if __name__ == "__main__":
     # destroyer
     b.make_move(0, 8, 9)
     b.make_move(0, 9, 9)
-
-    b.print_board(1)
-    print(b.check_game_over())
+    #
+    # b.print_board(1)
+    # print(b.check_game_over())
