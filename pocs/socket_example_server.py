@@ -2,7 +2,7 @@ from flask import Flask, render_template
 import flask_socketio as fs
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = 'SeRvEr SeCrEt'
 socketio = fs.SocketIO(app)
 
 @socketio.on('receive')
