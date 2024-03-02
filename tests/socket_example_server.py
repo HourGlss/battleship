@@ -9,9 +9,5 @@ socketio = fs.SocketIO(app)
 def handle_message(data):
     fs.send("recieved"+data)
 
-@socketio.on('send')
-def handle_message(message):
-    fs.send(message)
-
 if __name__ == '__main__':
     socketio.run(app, allow_unsafe_werkzeug=True)
