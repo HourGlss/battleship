@@ -9,3 +9,7 @@ def index():
 @main.route('/register', methods=['POST', 'GET'])
 def register():
     return render_template('register.html')
+
+@main.route('/game')
+def game():
+    return
