@@ -1,0 +1,5 @@
+players = {}
+connections = []
+
+rooms = {}
+threads = {}

@@ -1,11 +1,10 @@
-from flask import Flask, request, jsonify, render_template
-from battleship import create_app, socketio
+from flask import request, jsonify, render_template
+from battleship import socketio
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-import json
 from User import User
-from server.Manager import Manager
-from server.Room import Room
+from Battleship.server.Manager import Manager
+from Battleship.server.Room import Room
 from utils import ShipRotation
 
 
