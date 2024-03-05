@@ -10,6 +10,6 @@ def create_app():
     app.config['SECRET_KEY'] = 'secret!'
     app.register_blueprint(main)
 
-    socketio.init_app(app)
+    socketio.init_app(app, logger=True, ping_interval=1, ping_timeout=2)
 
     return app

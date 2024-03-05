@@ -1,7 +1,7 @@
 import secrets
 import string
 import datetime
-from battleship import BattleShip, Player
+from battleship import Battleship, Player
 
 
 class Room:
@@ -11,7 +11,7 @@ class Room:
         self.users = []
         # make a room id with a random string
         self.id = generate_room_id(8)
-        self.battleship = BattleShip()
+        self.battleship = Battleship()
         self.validated = False
         self.player1 = None
         self.player2 = None

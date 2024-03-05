@@ -13,7 +13,7 @@ class Player:
         return self.ships
 
 
-class BattleShip:
+class Battleship:
     def __init__(self):
         self.current_player_turn = None
         self._board = [
@@ -351,7 +351,7 @@ class BattleShip:
 
 # Example usage:
 if __name__ == "__main__":
-    b = BattleShip()
+    b = Battleship()
     a = Player()
     a.set_ships({
         5: [{
