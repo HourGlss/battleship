@@ -40,7 +40,7 @@ class GameController(Thread):
             print('Received message: ', data)
             self.socketio.emit('response', {'data': 'Message received'})
 
-    def run(self):
+    def start(self):
         self.socketio.run(self.app, host='0.0.0.0', port=self.port, use_reloader=False)
 
     def add_player(self, player, sid):
