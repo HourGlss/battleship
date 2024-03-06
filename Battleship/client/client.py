@@ -4,12 +4,12 @@ import time
 import keyboard
 import socketio
 
+
 def generate_name():
     # Generate a secure random string of specified length
     alphabet = string.ascii_letters + string.digits
     name = ''.join(secrets.choice(alphabet) for i in range(8))
     return name
-
 
 
 class Client:
@@ -60,6 +60,7 @@ class Client:
         # Disconnect using the client instance
         self.sio.disconnect()
         print("Client disconnected")
+
 
 if __name__ == "__main__":
     client = Client('http://localhost:5555')

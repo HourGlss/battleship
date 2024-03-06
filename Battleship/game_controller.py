@@ -2,13 +2,7 @@ from flask import Flask, request
 from flask_socketio import SocketIO
 from threading import Thread, Lock
 from battleship import Battleship, Player
-from .extensions import socketio
 
-def find_sid_by_username(username):
-    for sid, info in players.items():
-        if info['username'] == username:
-            return sid
-    return None
 
 class GameController(Thread):
     def __init__(self, port, room_id):
@@ -44,7 +38,6 @@ class GameController(Thread):
             self.add_player(username, sid)
             self.socketio.emit('join_ack', {'message': f'{username} has joined.'}, room=sid)
 
-
         @self.socketio.on('message')
         def handle_message(data):
             print('Received message: ', data)
@@ -52,7 +45,7 @@ class GameController(Thread):
 
         @self.socketio.on('set_ships')
         def set_ships(data):
-            player = self.find_sid_by_sid(request.sid)
+            player = self.find_player_by_sid(request.sid)
             self.players[player]["ships"] = data["ships"]
             self.players[player]["ships_set"] = True
 
@@ -61,7 +54,8 @@ class GameController(Thread):
                 self.players["player1"]["playerstate"] = player1
                 player2 = Player()
                 self.players["player2"]["playerstate"] = player2
-                self.battleship.add_players(self.players["player1"]["playerstate"], self.players["player2"]["playerstate"])
+                self.battleship.add_players(self.players["player1"]["playerstate"],
+                                            self.players["player2"]["playerstate"])
                 if self.battleship.validate_and_place_ships():
                     self.socketio.emit("response", {'message': 'Ships have been placed'})
                 else:
@@ -71,7 +65,7 @@ class GameController(Thread):
 
         @self.socketio.on("make_move")
         def make_move(data):
-            player = self.find_sid_by_sid(request.sid)
+            player = self.find_player_by_sid(request.sid)
             if (self.player_turn == 0 and player == "player1") or (self.player_turn == 1 and player == "player2"):
                 self.battleship.make_move(data["p"], data["x"], data["y"])
                 p1, p2 = self.battleship.check_game_over()
@@ -108,7 +102,7 @@ class GameController(Thread):
                     return False
             return True
 
-    def find_sid_by_sid(self, sid):
+    def find_player_by_sid(self, sid):
         with self.lock:
             for player, info in self.players.items():
                 if info['sid'] == sid:

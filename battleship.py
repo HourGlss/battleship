@@ -1,4 +1,6 @@
 from utils import BattleShipException, TileState, ShipRotation
+
+
 class Player:
 
     def __init__(self):
@@ -170,8 +172,6 @@ class Battleship:
             print(row)
         print("*" * 12)
 
-
-
     def make_move(self, p, x, y):
         """
         0 = MISS , _
@@ -282,7 +282,6 @@ class Battleship:
             "p1_alive": p1_alive,
         }
 
-
     def _validate_ships(self, ship_dict):
         ship_keys = {'x', 'y', 'rotation'}
         if not isinstance(ship_dict, dict):
@@ -301,6 +300,7 @@ class Battleship:
                 if not isinstance(ship['rotation'], ShipRotation):
                     return False
         return True
+
 
 # Example usage:
 if __name__ == "__main__":

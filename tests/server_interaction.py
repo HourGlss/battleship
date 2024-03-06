@@ -113,6 +113,7 @@ def get_status(room_id):
     assert response.status_code == 200
     return response.json()
 
+
 def attack(room_id, username, x, y):
     data = {
         "username": username,

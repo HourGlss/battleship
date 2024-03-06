@@ -2,7 +2,6 @@ from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
 import os.path
-import base64
 
 
 class Node:
@@ -131,5 +130,5 @@ if __name__ == "__main__":
     s = Server("SECRET TOPS")
     back_to_player = s.initial_send(p.name, p.pub_rsa)
     p.initial_receive(back_to_player)
-    s.receive_data("Bob",p.send_data("Hello there"))
-    p.receive_data(s.send_data("Bob","From The Server"))
+    s.receive_data("Bob", p.send_data("Hello there"))
+    p.receive_data(s.send_data("Bob", "From The Server"))

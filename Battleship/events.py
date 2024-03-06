@@ -4,11 +4,9 @@ import socket
 import time
 
 from flask import request
-from flask_socketio import join_room, send, leave_room, emit
 from itertools import combinations
 
 from .extensions import socketio
-import threading
 from .game_controller import GameController
 from .shared_state import players, connections, rooms, threads
 
@@ -19,12 +17,12 @@ def generate_room_id(length=8):
     room_id = ''.join(secrets.choice(alphabet) for i in range(length))
     return room_id
 
+
 def find_sid_by_username(username):
     for sid, info in players.items():
         if info['username'] == username:
             return sid
     return None
-
 
 
 def find_open_port():
