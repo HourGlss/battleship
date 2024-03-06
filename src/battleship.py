@@ -1,4 +1,4 @@
-from utils import BattleShipException, TileState, ShipRotation
+from .utils import TileState, BattleShipException, ShipRotation
 
 
 class Player:

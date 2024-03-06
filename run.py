@@ -1,4 +1,4 @@
-from src.Battleship import create_app, socketio
+from src import create_app, socketio
 
 app = create_app()
 
