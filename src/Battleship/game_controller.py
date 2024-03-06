@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_socketio import SocketIO
 from threading import Thread, Lock
-from battleship import Battleship, Player
+from src.battleship import Battleship, Player
 
 
 class GameController(Thread):
