@@ -109,7 +109,8 @@ class GameController(Thread):
             return True
 
     def find_sid_by_sid(self, sid):
-        for player, info in self.players.items():
-            if info['sid'] == sid:
-                return player
-        return None
+        with self.lock:
+            for player, info in self.players.items():
+                if info['sid'] == sid:
+                    return player
+            return None
