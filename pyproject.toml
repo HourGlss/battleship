@@ -1,0 +1,19 @@
+[project]
+name = "battleship_package_fleshmanj"
+version = "0.0.1"
+authors = [
+  { name="Joshua Fleshman", email="author@example.com" },
+    { name="Adam Bairos", email="author@example.com" }
+]
+description = "A server based battleship game to host bot vs bot battles"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/HourGlss/battleship"
+Issues = "https://github.com/HourGlss/battleship/issues"
