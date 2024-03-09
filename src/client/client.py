@@ -65,7 +65,8 @@ class Client:
         print(self.secure_player.pub_rsa)
         self.sio.connect(self.uri, headers={"username": self.name}, auth={"rec_key": base64.urlsafe_b64encode(self.secure_player.pub_rsa).decode("utf-8")})
         print("Client started and connected to", self.uri)
-        client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
+        client.sio.emit("initial send", {"username": self.name, "payload": self.secure_player.send_data("Initial send")})
+        # client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
 
     def stop(self):
         # Disconnect using the client instance
