@@ -3,6 +3,7 @@ import string
 import time
 import keyboard
 import socketio
+import base64
 
 from src.pocs.crypto_example_2 import SecurePlayer
 
@@ -62,7 +63,7 @@ class Client:
     def start(self):
         # Connect using the client instance to the specified URI
         print(self.secure_player.pub_rsa)
-        self.sio.connect(self.uri, headers={"username": self.name}, auth={"rec_key": self.secure_player.pub_rsa})
+        self.sio.connect(self.uri, headers={"username": self.name}, auth={"rec_key": base64.urlsafe_b64encode(self.secure_player.pub_rsa)})
         print("Client started and connected to", self.uri)
         client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
 

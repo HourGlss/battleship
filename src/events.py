@@ -2,6 +2,7 @@ import secrets
 import string
 import socket
 import time
+import base64
 
 from flask import request
 from itertools import combinations
@@ -43,7 +44,7 @@ def handle_connect(auth):
     print("Client Connected")
     clientid = get_random_bytes(16)
     username = request.headers.get("username")
-    rec_key = auth.get("rec_key")
+    rec_key = base64.urlsafe_b64decode(auth.get("rec_key"))
     print(rec_key)
     message = secure_server.initial_send(username, rec_key)
     socketio.emit("initial send", {"auth": message}, to=request.sid)
