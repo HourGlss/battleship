@@ -10,6 +10,7 @@ from Crypto.Random import get_random_bytes
 
 from .extensions import socketio, secure_server
 from .game_controller import GameController
+from .pocs.crypto_example_1 import cipher_aes
 from .shared_state import players, connections, rooms, threads
 
 
@@ -39,8 +40,12 @@ def find_open_windows_port():
 
 
 def exchange_keys(clientid):
-    message = secure_server.initial_send(players[clientid]["username"], players[clientid]["rec_key"])
-    socketio.emit("initial send", {"message": message}, to=players[clientid]["sid"])
+    enc_session_key, cipher_aes.nonce, tag, ciphertext = secure_server.initial_send(players[clientid]["username"],
+                                                                                    players[clientid]["rec_key"])
+    socketio.emit("initial send", {"enc_session_key": enc_session_key,
+                                   "cipher_aes.nonce": cipher_aes.nonce,
+                                   "tag": tag, "ciphertext": ciphertext
+                                   }, to=players[clientid]["sid"])
     players[clientid] = {"last_heard": time.time()}
     socketio.emit("response", {"message": "connected to server"}, to=players[clientid]["sid"])
 

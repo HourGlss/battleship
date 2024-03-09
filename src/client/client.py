@@ -58,7 +58,8 @@ class Client:
         @self.sio.on('initial send')
         def initial_send(data):
             print("Initial send received")
-            self.secure_player.initial_receive(data["message"])
+            from_server = (data["enc_session_key"], data["cipher_aes.nonce"], data["tag"], data["ciphertext"])
+            self.secure_player.initial_receive(from_server)
 
     def start(self):
         # Connect using the client instance to the specified URI
