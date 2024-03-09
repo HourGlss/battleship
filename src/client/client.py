@@ -62,7 +62,7 @@ class Client:
     def start(self):
         # Connect using the client instance to the specified URI
         print(self.secure_player.pub_rsa)
-        self.sio.connect(self.uri, headers={"username": self.name}, auth={"rec_key": self.secure_player.pub_rsa.decode("utf-8")})
+        self.sio.connect(self.uri, headers={"username": self.name}, auth={"rec_key": self.secure_player.pub_rsa})
         print("Client started and connected to", self.uri)
         client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
 
