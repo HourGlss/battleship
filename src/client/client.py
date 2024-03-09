@@ -4,6 +4,8 @@ import time
 import keyboard
 import socketio
 
+from src.pocs.crypto_example_2 import SecurePlayer
+
 
 def generate_name():
     # Generate a secure random string of specified length
@@ -20,6 +22,7 @@ class Client:
         self.rooms = {}
         self.register_handlers()
         self.name = generate_name()
+        self.secure_player = SecurePlayer("password", self.name)
 
     def register_handlers(self):
         # Define event handlers using the instance's `on` method
@@ -45,16 +48,22 @@ class Client:
             print("Response from server:", data)
 
         @self.sio.on('heartbeat')
-        def heartbeat(data):
+        def heartbeat():
             print("Heartbeat received")
             # Respond to the heartbeat directly using the client instance
-            self.sio.emit("heartbeat_response", {'data': 'Heartbeat acknowledged'})
+            message = self.secure_player.send_data("Heartbeat acknowledged")
+            self.sio.emit("heartbeat_response", {"username": self.name, "payload": message})
+
+        @self.sio.on('initial send')
+        def initial_send(data):
+            print("Initial send received")
+            self.secure_player.initial_receive(data['auth'])
 
     def start(self):
         # Connect using the client instance to the specified URI
         self.sio.connect(self.uri)
         print("Client started and connected to", self.uri)
-        client.sio.emit("register", {"username": self.name})
+        client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
 
     def stop(self):
         # Disconnect using the client instance
@@ -71,5 +80,6 @@ if __name__ == "__main__":
             client.stop()
             break
         if keyboard.is_pressed('p'):
-            client.sio.emit("open_to_play")
+            message = client.secure_player.send_data("Open to play")
+            client.sio.emit("open_to_play", {"username": client.name, "payload": message})
         time.sleep(1)

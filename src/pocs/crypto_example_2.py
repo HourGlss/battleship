@@ -9,7 +9,7 @@ class Node:
         if name is None:
             name = "server"
         self.name = name
-        self.rsa_filepath = f"{self.name}rsa_ley.bin"
+        self.rsa_filepath = f"{self.name}rsa_key.bin"
         self.secret_code = secret_code
         if not os.path.isfile(self.rsa_filepath):
             self.create_rsa()
@@ -34,7 +34,7 @@ class Node:
         self.priv_rsa = key.export_key()
 
 
-class Player(Node):
+class SecurePlayer(Node):
 
     def __init__(self, secret_code, name):
         super().__init__(secret_code, name=name)
@@ -76,7 +76,7 @@ class Player(Node):
             print("The message was modified!")
 
 
-class Server(Node):
+class SecureServer(Node):
 
     def __init__(self, secret_code):
         super().__init__(secret_code)
@@ -120,14 +120,14 @@ class Server(Node):
         message = None
         try:
             message = cipher.decrypt_and_verify(ciphertext, tag)
-            print("Message:", message.decode())
+            return message.decode()
         except ValueError:
             print("The message was modified!")
 
 
 if __name__ == "__main__":
-    p = Player("my name is bob", "Bob")
-    s = Server("SECRET TOPS")
+    p = SecurePlayer("my name is bob", "Bob")
+    s = SecureServer("SECRET TOPS")
     back_to_player = s.initial_send(p.name, p.pub_rsa)
     p.initial_receive(back_to_player)
     s.receive_data("Bob", p.send_data("Hello there"))
