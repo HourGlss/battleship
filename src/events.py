@@ -50,6 +50,7 @@ def connect(auth):
     clientid = get_random_bytes(16)
     username = request.headers.get("username")
     rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
+    print(rec_key)
     players[clientid] = {"username": username, "last_heard": time.time(), "open_to_play": False, "sid": request.sid, "rec_key": rec_key}
     # exchange_keys(clientid)
 
