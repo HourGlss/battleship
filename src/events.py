@@ -40,7 +40,8 @@ def find_open_windows_port():
 
 
 @socketio.on("connect")
-def handle_connect():
+def handle_connect(data):
+    print(data)
     print("Client Connected")
     print(request)
     print(request.data)
