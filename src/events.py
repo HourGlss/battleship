@@ -40,7 +40,7 @@ def find_open_windows_port():
 
 def exchange_keys(clientid):
     message = secure_server.initial_send(players[clientid]["username"],players[clientid]["rec_key"])
-    socketio.emit("initial send", {"message": message}, to=players[clientid]["sid"])
+    socketio.emit("initial send", {"message": base64.urlsafe_b64encode(message)}, to=players[clientid]["sid"])
     players[clientid] = {"last_heard": time.time()}
     socketio.emit("response", {"message": "connected to server"}, to=players[clientid]["sid"])
 
