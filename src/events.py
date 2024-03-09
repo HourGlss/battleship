@@ -43,7 +43,7 @@ def handle_connect():
     print("Client Connected")
     clientid = get_random_bytes(16)
     username = request.headers.get("username")
-    rec_key = request.headers.get("rec_key").encode()
+    rec_key = request.authorization.get("rec_key").encode()
     print(rec_key)
     message = secure_server.initial_send(username, rec_key)
     socketio.emit("initial send", {"auth": message}, to=request.sid)
