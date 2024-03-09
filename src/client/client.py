@@ -58,8 +58,7 @@ class Client:
         @self.sio.on('initial send')
         def initial_send(data):
             print("Initial send received")
-            message = base64.urlsafe_b64decode(data['message'].encode("utf-8"))
-            self.secure_player.initial_receive(message)
+            self.secure_player.initial_receive(data["message"])
 
     def start(self):
         # Connect using the client instance to the specified URI

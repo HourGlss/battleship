@@ -13,7 +13,6 @@ from .game_controller import GameController
 from .shared_state import players, connections, rooms, threads
 
 
-
 def generate_room_id(length=8):
     # Generate a secure random string of specified length
     alphabet = string.ascii_letters + string.digits
@@ -38,9 +37,10 @@ def find_open_windows_port():
         # Return the open port number
         return port
 
+
 def exchange_keys(clientid):
-    message = secure_server.initial_send(players[clientid]["username"],players[clientid]["rec_key"])
-    socketio.emit("initial send", {"message": base64.urlsafe_b64encode(message).decode("utf-8")}, to=players[clientid]["sid"])
+    message = secure_server.initial_send(players[clientid]["username"], players[clientid]["rec_key"])
+    socketio.emit("initial send", {"message": message}, to=players[clientid]["sid"])
     players[clientid] = {"last_heard": time.time()}
     socketio.emit("response", {"message": "connected to server"}, to=players[clientid]["sid"])
 
@@ -51,13 +51,13 @@ def connect(auth):
     username = request.headers.get("username")
     rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
     print(rec_key)
-    players[clientid] = {"username": username, "last_heard": time.time(), "open_to_play": False, "sid": request.sid, "rec_key": rec_key}
+    players[clientid] = {"username": username, "last_heard": time.time(), "open_to_play": False, "sid": request.sid,
+                         "rec_key": rec_key}
+
 
 @socketio.on("initial send")
 def handle_initial_send(data):
     exchange_keys(find_playerid_by_username(data["username"]))
-
-
 
 
 @socketio.on("register")
@@ -140,7 +140,7 @@ def set_open_to_play(data):
                 thread.add_player(players[i[0]]["username"], i[0])
                 thread.add_player(players[i[1]]["username"], i[1])
                 # Assuming get_port() is meant to retrieve and print or use the port in some way
-                #TODO
+                # TODO
                 socketio.emit("get_port", {"port": thread.port}, to=i[0])
                 socketio.emit("get_port", {"port": thread.port}, to=i[1])
 
