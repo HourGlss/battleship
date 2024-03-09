@@ -52,16 +52,11 @@ def connect(auth):
     rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
     print(rec_key)
     players[clientid] = {"username": username, "last_heard": time.time(), "open_to_play": False, "sid": request.sid, "rec_key": rec_key}
-    # exchange_keys(clientid)
 
 @socketio.on("initial send")
 def handle_initial_send(data):
-    recv = secure_server.receive_data(data["username"], data["payload"])
-    if recv == "Initial send":
-        print("Initial send")
-        exchange_keys(find_playerid_by_username(data["username"]))
-    else:
-        print("unauthorized access attempt")
+    exchange_keys(find_playerid_by_username(data["username"]))
+
 
 
 
