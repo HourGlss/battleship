@@ -46,7 +46,7 @@ def exchange_keys(clientid):
                                    "cipher_aes.nonce": cipher_aes.nonce,
                                    "tag": tag, "ciphertext": ciphertext
                                    }, to=players[clientid]["sid"])
-    players[clientid] = {"last_heard": time.time()}
+    players[clientid]["last_heard"] = time.time()
     socketio.emit("response", {"message": "connected to server"}, to=players[clientid]["sid"])
 
 
@@ -55,7 +55,6 @@ def connect(auth):
     clientid = get_random_bytes(16)
     username = request.headers.get("username")
     rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
-    print(rec_key)
     players[clientid] = {"username": username, "last_heard": time.time(), "open_to_play": False, "sid": request.sid,
                          "rec_key": rec_key}
 
