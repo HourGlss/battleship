@@ -40,11 +40,13 @@ def find_open_windows_port():
 
 
 @socketio.on("connect")
-def handle_connect(headers, auth):
+def handle_connect():
     print("Client Connected")
+    print(request)
+    print(request.data)
     clientid = get_random_bytes(16)
-    username = headers.get("username")
-    rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
+    username = request.headers.get("username")
+    rec_key = base64.urlsafe_b64decode(request.authorization.get("rec_key").encode("utf-8"))
     print(rec_key)
     message = secure_server.initial_send(username, rec_key)
     socketio.emit("initial send", {"auth": message}, to=request.sid)
