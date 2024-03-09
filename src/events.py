@@ -38,6 +38,11 @@ def find_open_windows_port():
         # Return the open port number
         return port
 
+def exchange_keys(message, clientid):
+    socketio.emit("initial send", {"auth": message}, to=request.sid)
+    players[clientid] = {"last_heard": time.time()}
+    socketio.emit("response", {"message": "connected to server"}, to=request.sid)
+
 
 @socketio.on("connect")
 def connect(auth):
@@ -46,9 +51,8 @@ def connect(auth):
     username = request.headers.get("username")
     rec_key = base64.urlsafe_b64decode(auth.get("rec_key").encode("utf-8"))
     message = secure_server.initial_send(username, rec_key)
-    socketio.emit("initial send", {"auth": message}, to=request.sid)
-    players[clientid] = {"last_heard": time.time()}
-    socketio.emit("response", {"message": "connected to server"}, to=request.sid)
+    exchange_keys(message, clientid)
+
 
 
 @socketio.on("register")
