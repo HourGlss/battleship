@@ -34,7 +34,7 @@ class Client:
             if port not in self.rooms:
                 # Initialize a new socketio.Client for the game room
                 game_client = socketio.Client()
-                game_client.connect(f"http://localhost:{port}")
+                game_client.connect(f"http://45.79.223.73:{port}")
                 game_client.emit(f"join", {"username": self.name})
                 game_client.emit("ping")
                 self.rooms[port] = {"client": game_client}
@@ -63,7 +63,7 @@ class Client:
 
 
 if __name__ == "__main__":
-    client = Client('http://localhost:5555')
+    client = Client('http://45.79.223.73:5555')
     client.start()
 
     while True:
