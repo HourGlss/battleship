@@ -122,11 +122,10 @@ def set_open_to_play(data):
         players[find_playerid_by_username(data["username"])]["open_to_play"] = True
         print("Open to play")
         # Get all unique combinations of players of length 2
-        print(players.values())
 
         # filter out players who are not open to play or do not have key 'open_to_play'
         players_list = [player for player in players.keys() if players[player].get("open_to_play") == True]
-
+        print(players_list)
         comb = combinations(players_list, 2)
 
         # Convert combinations to a list once so we can iterate multiple times
