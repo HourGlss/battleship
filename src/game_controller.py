@@ -116,10 +116,14 @@ class GameController(Thread):
 
     def convert_ship_rotation_to_enum(self, ships):
         """
-        ships is a dictionary with ship type as a key and an has a dictionary with x, y and rotation as keys. Convert the rotation to the enum type.
-        :param ships:
-        :return:
+        Convert the rotation of each ship in the provided dictionary from a numeric
+        value to the corresponding enum value.
+
+        :param ships: A dictionary of ships, where each key is a ship type and each value
+                      is a list of dictionaries containing 'x', 'y', and 'rotation'.
+        :return: The same ships dictionary, but with 'rotation' converted to enum values.
         """
-        for ship in ships.keys():
-            ships[ship]["rotation"] = ShipRotation(ships[ship]["rotation"])
+        for ship_type, ship_list in ships.items():
+            for ship in ship_list:
+                ship['rotation'] = ShipRotation(ship['rotation'])
         return ships
