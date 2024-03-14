@@ -45,7 +45,7 @@ class GameController(Thread):
 
         @self.socketio.on('set_ships')
         def set_ships(data):
-            player = self.find_player_by_sid(request.sid)
+            player = self.find_player_by_username(data["username"])
             self.players[player]["ships"] = data["ships"]
             self.players[player]["ships_set"] = True
 
@@ -65,7 +65,7 @@ class GameController(Thread):
 
         @self.socketio.on("make_move")
         def make_move(data):
-            player = self.find_player_by_sid(request.sid)
+            player = self.find_player_by_username(data["username"])
             if (self.player_turn == 0 and player == "player1") or (self.player_turn == 1 and player == "player2"):
                 self.battleship.make_move(data["p"], data["x"], data["y"])
                 p1, p2 = self.battleship.check_game_over()
@@ -104,9 +104,9 @@ class GameController(Thread):
                     return False
             return True
 
-    def find_player_by_sid(self, sid):
+    def find_player_by_username(self, username):
         with self.lock:
             for player, info in self.players.items():
-                if info['sid'] == sid:
+                if info['username'] == username:
                     return player
             return None

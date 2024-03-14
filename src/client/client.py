@@ -6,6 +6,7 @@ import socketio
 import base64
 
 from src.pocs.crypto_example_2 import SecurePlayer
+from src.shared_state import test_ship_dict
 
 
 def generate_name():
@@ -86,4 +87,7 @@ if __name__ == "__main__":
         if keyboard.is_pressed('p'):
             tag, nonce, ciphertext = client.secure_player.send_data("Open to play")
             client.sio.emit("open_to_play", {"username": client.name, "payload": {"tag":tag, "nonce":nonce, "ciphertext":ciphertext}})
+        if keyboard.is_pressed('h'):
+            for port in client.rooms.keys():
+                client.rooms[port]["client"].emit("set_ships", {"username": client.name, "ships": test_ship_dict})
         time.sleep(1)
