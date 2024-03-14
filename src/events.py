@@ -116,6 +116,7 @@ def handle_heartbeat_response(data):
 
 @socketio.on('open_to_play')
 def set_open_to_play(data):
+    payload_tuple = (data["payload"]["tag"], data["payload"]["nonce"], data["payload"]["ciphertext"])
     recv = secure_server.receive_data(data["username"], data["payload"])
     if recv == "Open to play":
         players[find_playerid_by_username(data["username"])]["open_to_play"] = True
@@ -152,7 +153,6 @@ def set_open_to_play(data):
                 rooms[room_id] = f"{i[0]}+{i[1]}"
                 threads[room_id] = {"players": (p1_name, p2_name), "game_controller": thread}
                 thread.start()
-
 
 @socketio.event
 def poll_connections():

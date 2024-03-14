@@ -84,6 +84,6 @@ if __name__ == "__main__":
             client.stop()
             break
         if keyboard.is_pressed('p'):
-            message = client.secure_player.send_data("Open to play")
-            client.sio.emit("open_to_play", {"username": client.name, "payload": message})
+            tag, nonce, ciphertext = client.secure_player.send_data("Open to play")
+            client.sio.emit("open_to_play", {"username": client.name, "payload": {"tag":tag, "nonce":nonce, "ciphertext":ciphertext}})
         time.sleep(1)
