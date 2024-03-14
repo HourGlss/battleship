@@ -80,7 +80,7 @@ class GameController(Thread):
 
     def add_player(self, player, sid):
         with self.lock:
-            player = {"username": player, "ships_set": False, "sid": sid}
+            player = {"username": player, "ships_set": False, "sid": sid, "ships": None}
             if len(self.players) == 0:
                 self.players["player1"] = player
             else:
