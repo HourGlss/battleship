@@ -69,7 +69,7 @@ class Battleship:
                 x = ship_dict[type_of_boat][specific]['x']
                 y = ship_dict[type_of_boat][specific]['y']
                 rot = ship_dict[type_of_boat][specific]['rotation']
-                if rot == ShipRotation.DOWN:
+                if rot == ShipRotation.DOWN.value:
                     for _ in range(type_of_boat):
                         if x < 0 or x >= 10 or y < 0 or y >= 10:
                             return False
@@ -88,7 +88,7 @@ class Battleship:
                         else:
                             return False
                         y += 1
-                if rot == ShipRotation.UP:
+                if rot == ShipRotation.UP.value:
                     for _ in range(type_of_boat):
                         if x < 0 or x >= 10 or y < 0 or y >= 10:
                             return False
@@ -107,7 +107,7 @@ class Battleship:
                         else:
                             return False
                         y -= 1
-                if rot == ShipRotation.LEFT:
+                if rot == ShipRotation.LEFT.value:
                     for _ in range(type_of_boat):
                         if x < 0 or x >= 10 or y < 0 or y >= 10:
                             return False
@@ -126,7 +126,7 @@ class Battleship:
                         else:
                             return False
                         x -= 1
-                if rot == ShipRotation.RIGHT:
+                if rot == ShipRotation.RIGHT.value:
                     for _ in range(type_of_boat):
                         if x < 0 or x >= 10 or y < 0 or y >= 10:
                             return False
