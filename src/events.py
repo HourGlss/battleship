@@ -124,7 +124,10 @@ def set_open_to_play(data):
         # Get all unique combinations of players of length 2
 
         # filter out players who are not open to play or do not have key 'open_to_play'
-        players_list = [player for player in players.keys() if players[player].get("open_to_play") == True]
+        players_list = []
+        for player in players.keys():
+            if players[player].get("open_to_play"):
+                players_list.append(player)
         print(players_list)
         comb = combinations(players_list, 2)
 
@@ -152,6 +155,7 @@ def set_open_to_play(data):
                 rooms[room_id] = f"{i[0]}+{i[1]}"
                 threads[room_id] = {"players": (p1_name, p2_name), "game_controller": thread}
                 thread.start()
+
 
 @socketio.event
 def poll_connections():
