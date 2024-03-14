@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_socketio import SocketIO
 from threading import Thread, Lock
 from src.battleship import Battleship, Player
+from src.utils import ShipRotation
 
 
 class GameController(Thread):
@@ -47,7 +48,8 @@ class GameController(Thread):
         def set_ships(data):
             print(data)
             player = self.find_player_by_username(data["username"])
-            self.players[player]["ships"] = data["ships"]
+            ships = self.convert_ship_rotation_to_enum(data["ships"])
+            self.players[player]["ships"] = ships
             self.players[player]["ships_set"] = True
 
             if self.all_ships_set():
@@ -111,3 +113,13 @@ class GameController(Thread):
                 if info['username'] == username:
                     return player
             return None
+
+    def convert_ship_rotation_to_enum(self, ships):
+        """
+        ships is a dictionary with ship type as a key and an has a dictionary with x, y and rotation as keys. Convert the rotation to the enum type.
+        :param ships:
+        :return:
+        """
+        for ship in ships.keys():
+            ships[ship]["rotation"] = ShipRotation(ships[ship]["rotation"])
+        return ships
