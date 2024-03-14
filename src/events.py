@@ -145,12 +145,12 @@ def set_open_to_play(data):
 
                 thread = GameController(find_open_windows_port(), room_id)
                 # Use the sids instead of usernames when adding players
-                thread.add_player(players[i[0]]["username"], i[0])
-                thread.add_player(players[i[1]]["username"], i[1])
+                thread.add_player(players[i[0]]["username"], players[i[0]]["sid"])
+                thread.add_player(players[i[1]]["username"], players[i[1]]["sid"])
                 # Assuming get_port() is meant to retrieve and print or use the port in some way
                 # TODO
-                socketio.emit("get_port", {"port": thread.port}, to=i[0])
-                socketio.emit("get_port", {"port": thread.port}, to=i[1])
+                socketio.emit("get_port", {"port": thread.port}, to=players[i[0]]["sid"])
+                socketio.emit("get_port", {"port": thread.port}, to=players[i[1]]["sid"])
 
                 # thread.get_port()  # Store or use the port if necessary
                 rooms[room_id] = f"{i[0]}+{i[1]}"
