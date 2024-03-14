@@ -117,7 +117,7 @@ def handle_heartbeat_response(data):
 @socketio.on('open_to_play')
 def set_open_to_play(data):
     payload_tuple = (data["payload"]["tag"], data["payload"]["nonce"], data["payload"]["ciphertext"])
-    recv = secure_server.receive_data(data["username"], data["payload"])
+    recv = secure_server.receive_data(data["username"], payload_tuple)
     if recv == "Open to play":
         players[find_playerid_by_username(data["username"])]["open_to_play"] = True
         print("Open to play")
