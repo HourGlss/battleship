@@ -45,6 +45,7 @@ class GameController(Thread):
 
         @self.socketio.on('set_ships')
         def set_ships(data):
+            print(data)
             player = self.find_player_by_username(data["username"])
             self.players[player]["ships"] = data["ships"]
             self.players[player]["ships_set"] = True
