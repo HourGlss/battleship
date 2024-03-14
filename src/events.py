@@ -127,6 +127,7 @@ def set_open_to_play(data):
         players_list = []
         for player in players.keys():
             if players[player].get("open_to_play"):
+                print(players[player]["username"])
                 players_list.append(player)
         print(players_list)
         comb = combinations(players_list, 2)
