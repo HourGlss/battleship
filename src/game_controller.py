@@ -92,8 +92,10 @@ class GameController(Thread):
 
     def get_port(self):
         with self.lock:
-            for player in self.players:
-                self.socketio.emit("get_port", {"port": self.port}, to=player["sid"])
+            player1sid = self.players["player1"]["sid"]
+            player2sid = self.players["player2"]["sid"]
+            self.socketio.emit("get_port", {"port": self.port}, room=player1sid)
+            self.socketio.emit("get_port", {"port": self.port}, room=player2sid)
 
     def all_ships_set(self):
         with self.lock:
