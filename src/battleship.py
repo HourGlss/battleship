@@ -152,22 +152,7 @@ class Battleship:
         for j in range(10):
             row = "*"
             for k in range(10):
-                if self._board[p][k][j] == TileState.EMPTY:
-                    row += " "
-                if self._board[p][k][j] == TileState.EMPTY_MISS:
-                    row += "."
-                if self._board[p][k][j] == TileState.BOAT_HIT:
-                    row += "X"
-                if self._board[p][k][j] == TileState.CARRIER:
-                    row += "C"
-                if self._board[p][k][j] == TileState.BATTLESHIP:
-                    row += "B"
-                if self._board[p][k][j] == TileState.SUBMARINE1:
-                    row += "S"
-                if self._board[p][k][j] == TileState.SUBMARINE2:
-                    row += "s"
-                if self._board[p][k][j] == TileState.DESTROYER:
-                    row += "D"
+                row += self._board[p][k][j].value
             row += "*"
             print(row)
         print("*" * 12)
