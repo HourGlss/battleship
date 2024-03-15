@@ -46,11 +46,9 @@ class GameController(Thread):
 
         @self.socketio.on('set_ships')
         def set_ships(data):
-            print(data)
             player = self.find_player_by_username(data["username"])
             ships = self.convert_ship_rotation_to_enum(data["ships"])
             ships = self.convert_ship_keys_to_int(ships)
-            print(ships)
             self.players[player]["ships"] = ships
             self.players[player]["ships_set"] = True
 

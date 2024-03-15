@@ -268,6 +268,7 @@ class Battleship:
         }
 
     def _validate_ships(self, ship_dict):
+        print("Ship_dict: ", ship_dict)
         ship_keys = {'x', 'y', 'rotation'}
         if not isinstance(ship_dict, dict):
             print(1)
