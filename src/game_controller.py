@@ -49,6 +49,7 @@ class GameController(Thread):
             print(data)
             player = self.find_player_by_username(data["username"])
             ships = self.convert_ship_rotation_to_enum(data["ships"])
+            print(ships)
             self.players[player]["ships"] = ships
             self.players[player]["ships_set"] = True
 
@@ -125,5 +126,12 @@ class GameController(Thread):
         """
         for ship_type, ship_list in ships.items():
             for ship in ship_list:
-                ship['rotation'] = ShipRotation(ship['rotation'])
+                if ship["rotation"] == 3:
+                    ship["rotation"] = ShipRotation.UP
+                if ship["rotation"] == 2:
+                    ship["rotation"] = ShipRotation.DOWN
+                if ship["rotation"] == 1:
+                    ship["rotation"] = ShipRotation.RIGHT
+                if ship["rotation"] == 0:
+                    ship["rotation"] = ShipRotation.LEFT
         return ships
