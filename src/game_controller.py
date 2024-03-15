@@ -49,6 +49,7 @@ class GameController(Thread):
             print(data)
             player = self.find_player_by_username(data["username"])
             ships = self.convert_ship_rotation_to_enum(data["ships"])
+            ships = self.convert_ship_keys_to_int(ships)
             print(ships)
             self.players[player]["ships"] = ships
             self.players[player]["ships_set"] = True
@@ -135,3 +136,13 @@ class GameController(Thread):
                 if ship["rotation"] == 0:
                     ship["rotation"] = ShipRotation.LEFT
         return ships
+
+    def convert_ship_keys_to_int(self, ships):
+        """
+        Convert the keys of the ships dictionary from strings to integers.
+
+        :param ships: A dictionary of ships, where each key is a ship type and each value
+                      is a list of dictionaries containing 'x', 'y', and 'rotation'.
+        :return: The same ships dictionary, but with keys converted to integers.
+        """
+        return {int(k): v for k, v in ships.items()}
