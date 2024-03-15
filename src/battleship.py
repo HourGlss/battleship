@@ -270,19 +270,25 @@ class Battleship:
     def _validate_ships(self, ship_dict):
         ship_keys = {'x', 'y', 'rotation'}
         if not isinstance(ship_dict, dict):
+            print(1)
             return False
         if set(ship_dict.keys()) != {2, 3, 4, 5}:
+            print(2)
             return False
         if len(ship_dict[3]) != 2:
+            print(3)
             return False
         for size in ship_dict.keys():
             ships = ship_dict[size]
             for ship in ships:
                 if not isinstance(ship, dict) or set(ship.keys()) != ship_keys:
+                    print(4)
                     return False
                 if not all(isinstance(ship[key], int) and 0 <= ship[key] <= 9 for key in ['x', 'y']):
+                    print(5)
                     return False
                 if not isinstance(ship['rotation'], ShipRotation):
+                    print(6)
                     return False
         return True
 
