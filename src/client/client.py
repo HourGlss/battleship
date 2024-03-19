@@ -6,8 +6,33 @@ import socketio
 import base64
 import threading
 
+import asyncio
+import aioconsole
+
 from src.pocs.crypto_example_2 import SecurePlayer
 from src.shared_state import test_ship_dict
+
+ships = test_ship_dict
+
+
+async def monitor_keyboard(client):
+    while True:
+        input_str = await aioconsole.ainput("Enter command (q to quit, p to play, h to set ships, m to make move): ")
+        if input_str == 'q':
+            client.stop()
+            break
+        elif input_str == 'p':
+            tag, nonce, ciphertext = client.secure_player.send_data("Open to play")
+            client.sio.emit("open_to_play", {"username": client.name,
+                                             "payload": {"tag": tag, "nonce": nonce, "ciphertext": ciphertext}})
+        elif input_str == 'h':
+            for port in client.rooms.keys():
+                client.rooms[port]["client"].game_client.emit("set_ships",
+                                                              {"username": client.name, "ships": test_ship_dict})
+        elif input_str == 'm':
+            for port in client.rooms.keys():
+                client.rooms[port]["client"].game_client.emit("make_move", {"username": client.name, "x": 1, "y": 1})
+        await asyncio.sleep(1)  # Sleep to yield control back to the event loop
 
 
 def generate_name():
@@ -102,7 +127,7 @@ class Client:
         self.sio.connect(self.uri, headers={"username": self.name},
                          auth={"rec_key": base64.urlsafe_b64encode(self.secure_player.pub_rsa).decode("utf-8")})
         print("Client started and connected to", self.uri)
-        client.sio.emit("initial send", {"username": self.name})
+        self.sio.emit("initial send", {"username": self.name})
         # client.sio.emit("register", {"username": self.name, "payload": self.secure_player.send_data("Registering")})
 
     def stop(self):
@@ -110,23 +135,12 @@ class Client:
         self.sio.disconnect()
         print("Client disconnected")
 
-
-if __name__ == "__main__":
+async def main():
     client = Client('http://45.79.223.73:5555')
     client.start()
 
-    while True:
-        if keyboard.is_pressed('q'):
-            client.stop()
-            break
-        if keyboard.is_pressed('p'):
-            tag, nonce, ciphertext = client.secure_player.send_data("Open to play")
-            client.sio.emit("open_to_play", {"username": client.name,
-                                             "payload": {"tag": tag, "nonce": nonce, "ciphertext": ciphertext}})
-        if keyboard.is_pressed('h'):
-            for port in client.rooms.keys():
-                client.rooms[port]["client"].game_client.emit("set_ships", {"username": client.name, "ships": test_ship_dict})
-        if keyboard.is_pressed('m'):
-            for port in client.rooms.keys():
-                client.rooms[port]["client"].game_client.emit("make_move", {"username": client.name, "x": 1, "y": 1})
-        time.sleep(1)
+    await monitor_keyboard(client)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
