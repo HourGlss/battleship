@@ -125,8 +125,8 @@ if __name__ == "__main__":
                                              "payload": {"tag": tag, "nonce": nonce, "ciphertext": ciphertext}})
         if keyboard.is_pressed('h'):
             for port in client.rooms.keys():
-                client.rooms[port]["client"].emit("set_ships", {"username": client.name, "ships": test_ship_dict})
+                client.rooms[port]["client"].game_client.emit("set_ships", {"username": client.name, "ships": test_ship_dict})
         if keyboard.is_pressed('m'):
             for port in client.rooms.keys():
-                client.rooms[port]["client"].emit("make_move", {"username": client.name, "x": 1, "y": 1})
+                client.rooms[port]["client"].game_client.emit("make_move", {"username": client.name, "x": 1, "y": 1})
         time.sleep(1)

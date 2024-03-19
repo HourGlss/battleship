@@ -133,9 +133,9 @@ class GameController(Thread):
                 if ship["rotation"] == 2:
                     ship["rotation"] = ShipRotation.DOWN
                 if ship["rotation"] == 1:
-                    ship["rotation"] = ShipRotation.RIGHT
-                if ship["rotation"] == 0:
                     ship["rotation"] = ShipRotation.LEFT
+                if ship["rotation"] == 0:
+                    ship["rotation"] = ShipRotation.RIGHT
         return ships
 
     def convert_ship_keys_to_int(self, ships):
