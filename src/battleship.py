@@ -275,6 +275,7 @@ class Battleship:
             return False
         if set(ship_dict.keys()) != {2, 3, 4, 5}:
             print(2)
+            print(ship_dict.keys())
             return False
         if len(ship_dict[3]) != 2:
             print(3)
