@@ -59,6 +59,8 @@ class GameController(Thread):
                 self.players["player2"]["playerstate"] = player2
                 self.battleship.add_players(self.players["player1"]["playerstate"],
                                             self.players["player2"]["playerstate"])
+                self.battleship.players[0].set_ships(self.players["player1"]["ships"])
+                self.battleship.players[1].set_ships(self.players["player2"]["ships"])
                 if self.battleship.validate_and_place_ships():
                     self.socketio.emit("response", {'message': 'Ships have been placed'})
                 else:
