@@ -73,13 +73,13 @@ class GameController(Thread):
             player = self.find_player_by_username(data["username"])
             if (self.player_turn == 0 and player == "player1") or (self.player_turn == 1 and player == "player2"):
                 player_index = 0 if player == "player1" else 1
-                self.battleship.make_move(player_index, data["x"], data["y"])
+                result = self.battleship.make_move(player_index, data["x"], data["y"])
                 p1, p2 = self.battleship.check_game_over()
                 if p1 == False or p2 == False:
                     self.socketio.emit("response", {"message": "Game over you won"}, room=request.sid)
                 else:
                     self.player_turn = 1 - self.player_turn
-                    self.socketio.emit("response", {"message": "Move made", "board": self.battleship.print_board(player_index)}, room=request.sid)
+                    self.socketio.emit("response", {"message": "Move made", "board": result}, room=request.sid)
             else:
                 self.socketio.emit("response", {"message": "Not your turn to move"}, room=request.sid)
 
