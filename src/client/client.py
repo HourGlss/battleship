@@ -90,4 +90,7 @@ if __name__ == "__main__":
         if keyboard.is_pressed('h'):
             for port in client.rooms.keys():
                 client.rooms[port]["client"].emit("set_ships", {"username": client.name, "ships": test_ship_dict})
+        if keyboard.is_pressed('m'):
+            for port in client.rooms.keys():
+                client.rooms[port]["client"].emit("make_move", {"username": client.name, "x": 1, "y": 1})
         time.sleep(1)
