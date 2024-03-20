@@ -86,7 +86,7 @@ class GameController(Thread):
                 winner, loser = ("player2", "player1") if not p1 else ("player1", "player2")
                 self.socketio.emit("game_over", {"message": "Game over you won"}, room=self.players[winner]["sid"])
                 self.socketio.emit("game_over", {"message": "Game over you lost"}, room=self.players[loser]["sid"])
-                self.remove_room_callback(self.port)
+                self.remove_room_callback(self.room_id)
             else:
                 self.socketio.emit("print_board", {"message": "Your board \n", "board": self.battleship.print_my_board(self.player_turn)}, room=request.sid)
                 self.player_turn = 1 - self.player_turn
