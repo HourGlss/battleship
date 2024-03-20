@@ -38,6 +38,7 @@ def find_open_windows_port():
         # Return the open port number
         return port
 
+
 def remove_room(room_id):
     del rooms[room_id]
     del threads[room_id]
