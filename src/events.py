@@ -38,6 +38,10 @@ def find_open_windows_port():
         # Return the open port number
         return port
 
+def remove_room(room_id):
+    del rooms[room_id]
+    del threads[room_id]
+
 
 def exchange_keys(clientid):
     enc_session_key, cipher_aes.nonce, tag, ciphertext = secure_server.initial_send(players[clientid]["username"],
@@ -143,7 +147,7 @@ def set_open_to_play(data):
             if f"{i[0]}+{i[1]}" not in rooms.values():
                 room_id = generate_room_id()
 
-                thread = GameController(find_open_windows_port(), room_id)
+                thread = GameController(find_open_windows_port(), room_id, remove_room(room_id))
                 # Use the sids instead of usernames when adding players
                 thread.add_player(players[i[0]]["username"], players[i[0]]["sid"])
                 thread.add_player(players[i[1]]["username"], players[i[1]]["sid"])

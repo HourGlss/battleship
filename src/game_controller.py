@@ -6,7 +6,7 @@ from src.utils import ShipRotation
 
 
 class GameController(Thread):
-    def __init__(self, port, room_id):
+    def __init__(self, port, room_id, remove_room_callback=None):
         super(GameController, self).__init__()
         self.lock = Lock()
         self.room_id = room_id
@@ -17,6 +17,7 @@ class GameController(Thread):
         self.app.config['SECRET_KEY'] = 'secret!'
         self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         self.player_turn = 0
+        self.remove_room_callback = remove_room_callback
 
         # Register event handlers
         self.register_socket_events()
@@ -85,6 +86,7 @@ class GameController(Thread):
                 winner, loser = ("player2", "player1") if not p1 else ("player1", "player2")
                 self.socketio.emit("game_over", {"message": "Game over you won"}, room=self.players[winner]["sid"])
                 self.socketio.emit("game_over", {"message": "Game over you lost"}, room=self.players[loser]["sid"])
+                self.remove_room_callback(self.port)
             else:
                 self.player_turn = 1 - self.player_turn
                 self.socketio.emit("response", {"message": "Move made", "board": result}, room=request.sid)
