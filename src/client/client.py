@@ -84,6 +84,9 @@ class GameClientThread:
         def on_move_prompt(data):
             print(data)
 
+        def on_print_board(data):
+            print(str(data["message"]))
+
         self.game_client.on('response', on_response)
         self.game_client.on('game_over', on_game_over)
         self.game_client.on('move_prompt', on_move_prompt)

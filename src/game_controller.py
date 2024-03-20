@@ -88,8 +88,9 @@ class GameController(Thread):
                 self.socketio.emit("game_over", {"message": "Game over you lost"}, room=self.players[loser]["sid"])
                 self.remove_room_callback(self.port)
             else:
-                self.socketio.emit("response", {"message": "Move made", "board": self.battleship.print_board(self.player_turn)}, room=request.sid)
+                self.socketio.emit("print_board", {"message": "Move made", "board": self.battleship.print_my_board(self.player_turn)}, room=request.sid)
                 self.player_turn = 1 - self.player_turn
+                self.socketio.emit("print_board", {"message": "Move made", "board": self.battleship.print_my_board(self.player_turn)}, room=request.sid)
                 self.notify_players_turn()
 
     def start(self):

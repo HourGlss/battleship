@@ -147,12 +147,28 @@ class Battleship:
                         x += 1
         return True
 
-    def print_board(self, p):
+    def print_my_board(self, p):
         board = ("*" * 12) + "\n"
         for j in range(10):
             board += "*"
             for k in range(10):
-                board += self._board[p][k][j].value
+                board += self._board[p][k][j].value  # Directly use the value for the player's own board
+            board += "*" + "\n"
+        board += "*" * 12
+        print(board)
+        return board
+
+    def print_opponent_board(self, p):
+        board = ("*" * 12) + "\n"
+        for j in range(10):
+            board += "*"
+            for k in range(10):
+                # For the opponent's board, filter out the ship locations
+                value = self._board[p][k][j].value
+                if value in ["S", "s", "B", "D", "C"]:  # If it's a ship, just show empty sea unless it's been hit
+                    board += ' '
+                else:
+                    board += value  # Show hits and misses as they are
             board += "*" + "\n"
         board += "*" * 12
         print(board)
