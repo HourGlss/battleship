@@ -148,14 +148,15 @@ class Battleship:
         return True
 
     def print_board(self, p):
-        print("*" * 12)
+        board = ("*" * 12) + "\n"
         for j in range(10):
-            row = "*"
+            board += "*"
             for k in range(10):
-                row += self._board[p][k][j].value
-            row += "*"
-            print(row)
-        print("*" * 12)
+                board += self._board[p][k][j].value
+            board += "*" + "\n"
+        board += "*" * 12
+        print(board)
+        return board
 
     def make_move(self, p, x, y):
         """
