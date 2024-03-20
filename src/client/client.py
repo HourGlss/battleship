@@ -90,6 +90,7 @@ class GameClientThread:
         self.game_client.on('response', on_response)
         self.game_client.on('game_over', on_game_over)
         self.game_client.on('move_prompt', on_move_prompt)
+        self.game_client.on('print_board', on_print_board)
 
     def start_thread(self):
         self.thread = threading.Thread(target=self.game_client.wait)
