@@ -71,17 +71,24 @@ class GameController(Thread):
         @self.socketio.on("make_move")
         def make_move(data):
             player = self.find_player_by_username(data["username"])
-            if (self.player_turn == 0 and player == "player1") or (self.player_turn == 1 and player == "player2"):
-                player_index = 0 if player == "player1" else 1
-                result = self.battleship.make_move(player_index, data["x"], data["y"])
-                p1, p2 = self.battleship.check_game_over()
-                if p1 == False or p2 == False:
-                    self.socketio.emit("response", {"message": "Game over you won"}, room=request.sid)
-                else:
-                    self.player_turn = 1 - self.player_turn
-                    self.socketio.emit("response", {"message": "Move made", "board": result}, room=request.sid)
-            else:
+            expected_player = "player1" if self.player_turn == 0 else "player2"
+
+            if player != expected_player:
                 self.socketio.emit("response", {"message": "Not your turn to move"}, room=request.sid)
+                return
+
+            player_index = self.player_turn
+            result = self.battleship.make_move(player_index, data["x"], data["y"])
+            p1, p2 = self.battleship.check_game_over()
+
+            if not p1 or not p2:
+                winner, loser = ("player2", "player1") if not p1 else ("player1", "player2")
+                self.socketio.emit("game_over", {"message": "Game over you won"}, room=self.players[winner]["sid"])
+                self.socketio.emit("game_over", {"message": "Game over you lost"}, room=self.players[loser]["sid"])
+            else:
+                self.player_turn = 1 - self.player_turn
+                self.socketio.emit("response", {"message": "Move made", "board": result}, room=request.sid)
+                self.notify_players_turn()
 
     def start(self):
         self.socketio.run(self.app, host='0.0.0.0', port=self.port, use_reloader=False)
@@ -150,3 +157,10 @@ class GameController(Thread):
         :return: The same ships dictionary, but with keys converted to integers.
         """
         return {int(k): v for k, v in ships.items()}
+
+    def notify_players_turn(self):
+        current_player_sid = self.players["player1" if self.player_turn == 0 else "player2"]["sid"]
+        waiting_player_sid = self.players["player2" if self.player_turn == 0 else "player1"]["sid"]
+
+        self.socketio.emit("response", {"message": "Your turn to move"}, room=current_player_sid)
+        self.socketio.emit("response", {"message": "Opponent's turn to move"}, room=waiting_player_sid)

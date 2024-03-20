@@ -1,7 +1,5 @@
 import secrets
 import string
-import time
-import keyboard
 import socketio
 import base64
 import threading
@@ -30,9 +28,27 @@ async def monitor_keyboard(client):
                 client.rooms[port]["client"].game_client.emit("set_ships",
                                                               {"username": client.name, "ships": test_ship_dict})
         elif input_str == 'm':
+            # Prompt the user to enter x and y coordinates
+            x = await aioconsole.ainput("Enter x coordinate (0-9): ")
+            y = await aioconsole.ainput("Enter y coordinate (0-9): ")
+
+            try:
+                # Convert x and y to integers and validate the input
+                x = int(x)
+                y = int(y)
+                if not (0 <= x <= 9) or not (0 <= y <= 9):
+                    print("Coordinates must be between 0 and 9.")
+                    continue
+            except ValueError:
+                # Handle case where x or y is not an integer
+                print("Coordinates must be integers.")
+                continue
+
+            # Emit the make_move event with the user-provided coordinates
             for port in client.rooms.keys():
-                client.rooms[port]["client"].game_client.emit("make_move", {"username": client.name, "x": 1, "y": 1})
+                client.rooms[port]["client"].game_client.emit("make_move", {"username": client.name, "x": x, "y": y})
         await asyncio.sleep(1)  # Sleep to yield control back to the event loop
+
 
 
 def generate_name():
@@ -43,9 +59,10 @@ def generate_name():
 
 
 class GameClientThread:
-    def __init__(self, port, username):
+    def __init__(self, port, username, on_disconnect_callback):
         self.port = port
         self.username = username
+        self.on_disconnect_callback = on_disconnect_callback  # Store the callback
         self.game_client = socketio.Client()
         try:
             self.game_client.connect(f"http://45.79.223.73:{self.port}")
@@ -60,7 +77,16 @@ class GameClientThread:
         def on_response(data):
             print("Response from server:", data)
 
+        def on_game_over(data):
+            print("Game over:", data)
+            self.stop()
+
+        def on_move_prompt(data):
+            print(data)
+
         self.game_client.on('response', on_response)
+        self.game_client.on('game_over', on_game_over)
+        self.game_client.on('move_prompt', on_move_prompt)
 
     def start_thread(self):
         self.thread = threading.Thread(target=self.game_client.wait)
@@ -70,6 +96,7 @@ class GameClientThread:
         self.game_client.disconnect()
         if self.thread.is_alive():
             self.thread.join()
+        self.on_disconnect_callback(self.port)
 
 
 class Client:
@@ -94,8 +121,8 @@ class Client:
             try:
                 port = data['port']
                 if port not in self.rooms:
-                    # Initialize a new socketio.Client for the game room
-                    game_client = GameClientThread(port, self.name)
+                    game_client = GameClientThread(port, self.name,
+                                                   self.handle_game_client_disconnect)
                     self.rooms[port] = {"client": game_client}
                     game_client.start_thread()
                     print("Connected to port", port)
@@ -120,6 +147,12 @@ class Client:
             print("Initial send received")
             from_server = (data["enc_session_key"], data["cipher_aes.nonce"], data["tag"], data["ciphertext"])
             self.secure_player.initial_receive(from_server)
+
+    def handle_game_client_disconnect(self, port):
+        # Remove the disconnected game client from the rooms dictionary
+        if port in self.rooms:
+            del self.rooms[port]
+            print(f"Game client disconnected and removed from room: {port}")
 
     def start(self):
         # Connect using the client instance to the specified URI
