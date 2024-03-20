@@ -86,6 +86,7 @@ class GameClientThread:
 
         def on_print_board(data):
             print(str(data["message"]))
+            print(str(data["board"]))
 
         self.game_client.on('response', on_response)
         self.game_client.on('game_over', on_game_over)
