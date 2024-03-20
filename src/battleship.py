@@ -378,7 +378,7 @@ if __name__ == "__main__":
     })
     b.add_players(a, f)
     b.validate_and_place_ships()
-    b.print_board(1)
+    b.print_my_board(1)
     b.make_move(0, 0, 6)
     # carrier
     b.make_move(0, 0, 0)
@@ -403,5 +403,5 @@ if __name__ == "__main__":
     b.make_move(0, 8, 9)
     b.make_move(0, 9, 9)
     #
-    # b.print_board(1)
+    # b.print_my_board(1)
     # print(b.check_game_over())

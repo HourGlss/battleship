@@ -11,7 +11,7 @@ from Crypto.Random import get_random_bytes
 from .extensions import socketio, secure_server
 from .game_controller import GameController
 from .pocs.crypto_example_1 import cipher_aes
-from .shared_state import players, connections, rooms, threads
+from .shared_state import players, rooms, threads
 
 
 def generate_room_id(length=8):
