@@ -175,9 +175,13 @@ class GameController(Thread):
         """
         return {int(k): v for k, v in ships.items()}
 
-    def notify_players_turn(self):
-        current_player_sid = self.players["player1" if self.player_turn == 0 else "player2"]["sid"]
-        waiting_player_sid = self.players["player2" if self.player_turn == 0 else "player1"]["sid"]
+    def notify_players_turn(self, current_player):
+        if current_player == 0:
+            current_player_sid = self.players["player1"]["sid"]
+            waiting_player_sid = self.players["player2"]["sid"]
+        else:
+            current_player_sid = self.players["player2"]["sid"]
+            waiting_player_sid = self.players["player1"]["sid"]
 
         self.socketio.emit("response", {"message": "Your turn to move"}, room=current_player_sid)
         self.socketio.emit("response", {"message": "Opponent's turn to move"}, room=waiting_player_sid)
