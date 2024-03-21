@@ -80,6 +80,7 @@ class GameController(Thread):
 
             player_index = self.player_turn
             result = self.battleship.make_move(player_index, data["x"], data["y"])
+
             p1, p2 = self.battleship.check_game_over()
 
             if not p1 or not p2:
@@ -88,6 +89,19 @@ class GameController(Thread):
                 self.socketio.emit("game_over", {"message": "Game over you lost"}, room=self.players[loser]["sid"])
                 self.remove_room_callback(self.room_id)
             else:
+                if result[0] == 2:
+                    # Get the type of ship that was hit (5 = carrier, 4 = battleship, 3 = sub1, 2 = sub2, 1 = destroyer)
+                    if result[1] == 5:
+                        ship_type = "carrier"
+                    elif result[1] == 4:
+                        ship_type = "battleship"
+                    elif result[1] == 3:
+                        ship_type = "sub1"
+                    elif result[1] == 2:
+                        ship_type = "sub2"
+                    else:
+                        ship_type = "destroyer"
+                    self.socketio.emit("response", {"message": f"You sunk their {ship_type}"}, room=request.sid)
                 self.socketio.emit("print_board", {"message": "Your board \n", "board": self.battleship.print_my_board(self.player_turn)}, room=request.sid)
                 self.player_turn = 1 - self.player_turn
                 self.socketio.emit("print_board", {"message": "Opponents board\n", "board": self.battleship.print_opponent_board(self.player_turn)}, room=request.sid)

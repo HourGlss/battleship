@@ -242,7 +242,7 @@ class Battleship:
         for i, _ in enumerate(current):
             if _ != 0:
                 if _ != after[i] and after[i] == 0:
-                    result = 2, i
+                    result = 2, i + 1
                     # print("YES", end= " ")
                     break
         # print(result)
