@@ -3,6 +3,8 @@ import string
 import socket
 import time
 import base64
+import logging
+import inspect
 
 from flask import request
 from itertools import combinations
@@ -14,7 +16,10 @@ from .pocs.crypto_example_1 import cipher_aes
 from .shared_state import players, rooms, threads
 
 
+
 def generate_room_id(length=8):
+    func = inspect.currentframe().f_back.f_code
+    logging.info(f"Generate room id")
     # Generate a secure random string of specified length
     alphabet = string.ascii_letters + string.digits
     room_id = ''.join(secrets.choice(alphabet) for i in range(length))
