@@ -1,5 +1,6 @@
 from .utils import TileState, BattleShipException, ShipRotation
-
+import logging
+import inspect
 
 class Player:
 
@@ -148,6 +149,7 @@ class Battleship:
         return True
 
     def print_my_board(self, p):
+        func = inspect.currentframe().f_back.f_code
         board = ("*" * 12) + "\n"
         for j in range(10):
             board += "*"
@@ -155,10 +157,11 @@ class Battleship:
                 board += self._board[p][k][j].value  # Directly use the value for the player's own board
             board += "*" + "\n"
         board += "*" * 12
-        print(board)
+        logging.info(board)
         return board
 
     def print_opponent_board(self, p):
+        func = inspect.currentframe().f_back.f_code
         board = ("*" * 12) + "\n"
         for j in range(10):
             board += "*"
@@ -171,7 +174,7 @@ class Battleship:
                     board += value  # Show hits and misses as they are
             board += "*" + "\n"
         board += "*" * 12
-        print(board)
+        logging.info(board)
         return board
 
     def make_move(self, p, x, y):
@@ -285,29 +288,21 @@ class Battleship:
         }
 
     def _validate_ships(self, ship_dict):
-        print("Ship_dict: ", ship_dict)
         ship_keys = {'x', 'y', 'rotation'}
         if not isinstance(ship_dict, dict):
-            print(1)
             return False
         if set(ship_dict.keys()) != {2, 3, 4, 5}:
-            print(2)
-            print(ship_dict.keys())
             return False
         if len(ship_dict[3]) != 2:
-            print(3)
             return False
         for size in ship_dict.keys():
             ships = ship_dict[size]
             for ship in ships:
                 if not isinstance(ship, dict) or set(ship.keys()) != ship_keys:
-                    print(4)
                     return False
                 if not all(isinstance(ship[key], int) and 0 <= ship[key] <= 9 for key in ['x', 'y']):
-                    print(5)
                     return False
                 if not isinstance(ship['rotation'], ShipRotation):
-                    print(6)
                     return False
         return True
 
