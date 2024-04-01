@@ -45,6 +45,8 @@ def find_open_windows_port():
 
 
 def remove_room(room_id):
+    for k, v in rooms.items():
+        print(k, v)
     del rooms[room_id]
     del threads[room_id]
 
