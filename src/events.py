@@ -88,21 +88,29 @@ def handle_register(data):
 @socketio.on('disconnect')
 def handle_disconnect():
     """
-    May need some additional logic to handle disconnections
-    :return:
+    Additional logic to handle disconnections
     """
-    func = inspect.currentframe().f_back.f_code
-    logging.info(f"removing player from dictionary")
+    logging.info("removing player from dictionary")
     # Remove the player from the dictionary upon disconnection
     player_sid = request.sid  # The session ID of the client
     logging.info(f"{player_sid}::::::: {players.values()}")
-    if player_sid in players.values():
-        logging.info(f"Found player {player_sid} in players dictionary")
-        player_id = [key for key, value in players.items() if value == player_sid][0]
+
+    # Correct approach to find the player_id by their sid
+    player_id = None
+    for key, value in players.items():
+        if 'sid' in value and value['sid'] == player_sid:
+            player_id = key
+            break
+
+    if player_id:
+        logging.info(f"Found player {player_sid} in players dictionary with ID {player_id}")
         logging.info(f"Removing player {player_id} from players dictionary")
         del players[player_id]
-        logging.info(f"{players.keys()}")
+        logging.info(f"Current players: {list(players.keys())}")
         print(f"Player {player_id} has been disconnected and removed.")
+    else:
+        logging.info(f"No player found with SID {player_sid}")
+
 
 
 @socketio.on("message")
