@@ -104,10 +104,8 @@ def handle_disconnect():
 
     if player_id:
         logging.info(f"Found player {player_sid} in players dictionary with ID {player_id}")
-        logging.info(f"Removing player {player_id} from players dictionary")
         del players[player_id]
-        logging.info(f"Current players: {list(players.keys())}")
-        print(f"Player {player_id} has been disconnected and removed.")
+        logging.info(f"Removed player {player_id} from players dictionary")
     else:
         logging.info(f"No player found with SID {player_sid}")
 
