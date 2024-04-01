@@ -95,6 +95,7 @@ def handle_disconnect():
     logging.info(f"removing player from dictionary")
     # Remove the player from the dictionary upon disconnection
     player_sid = request.sid  # The session ID of the client
+    logging.info(f"{player_sid}::::::: {players.values()}")
     if player_sid in players.values():
         logging.info(f"Found player {player_sid} in players dictionary")
         player_id = [key for key, value in players.items() if value == player_sid][0]
