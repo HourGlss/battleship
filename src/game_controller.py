@@ -106,7 +106,7 @@ class GameController(Thread):
                 self.socketio.emit("print_board", {"message": "Your board \n", "board": self.battleship.print_my_board(self.player_turn)}, room=request.sid)
                 self.player_turn = 1 - self.player_turn
                 self.socketio.emit("print_board", {"message": "Opponents board\n", "board": self.battleship.print_opponent_board(self.player_turn)}, room=request.sid)
-                self.notify_players_turn()
+                self.notify_players_turn(self.player_turn)
 
     def start(self):
         self.socketio.run(self.app, host='0.0.0.0', port=self.port, use_reloader=False)
