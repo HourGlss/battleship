@@ -32,7 +32,8 @@ class GameController(Thread):
             print('Client disconnected from server at port ', self.port)
             if request.sid in self.players.keys():
                 del self.players[request.sid]
-            self.remove_room_callback(self.room_id)
+            if len(self.players) == 0:
+                self.remove_room_callback(self.room_id)
 
         @self.socketio.on('join')
         def handle_join(data):
