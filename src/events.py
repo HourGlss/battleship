@@ -175,8 +175,8 @@ def set_open_to_play(data):
                 socketio.emit("get_port", {"port": thread.port}, to=players[i[1]]["sid"])
 
                 # thread.get_port()  # Store or use the port if necessary
-                rooms[room_id] = f"{i[0]}+{i[1]}"
-                threads[room_id] = {"players": (p1_name, p2_name), "game_controller": thread}
+                rooms[f"{room_id}"] = f"{i[0]}+{i[1]}"
+                threads[f"{room_id}"] = {"players": (p1_name, p2_name), "game_controller": thread}
                 thread.start()
 
 
