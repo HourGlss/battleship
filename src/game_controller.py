@@ -50,8 +50,9 @@ class GameController(Thread):
             player = self.find_player_by_username(data["username"])
             ships = self.convert_ship_rotation_to_enum(data["ships"])
             ships = self.convert_ship_keys_to_int(ships)
-            self.players[player]["ships"] = ships
-            self.players[player]["ships_set"] = True
+            if ships:
+                self.players[player]["ships"] = ships
+                self.players[player]["ships_set"] = True
 
             if self.all_ships_set():
                 player1 = Player()

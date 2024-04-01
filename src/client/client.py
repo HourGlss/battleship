@@ -106,13 +106,14 @@ class GameClientThread:
 
 
 class Client:
-    def __init__(self, username, uri):
+    def __init__(self, uri):
         # Initialize a socketio.Client instance here instead of using the socketio module directly
         self.sio = socketio.Client()
         self.uri = uri
         self.rooms = {}
         self.register_handlers()
-        self.name = username
+        self.name = generate_name()
+        # self.name = username
         self.secure_player = SecurePlayer("password", self.name)
 
     def register_handlers(self):
@@ -175,7 +176,7 @@ class Client:
         print("Client disconnected")
 
 async def main():
-    client = Client("joshua", 'http://45.79.223.73:5555')
+    client = Client('http://45.79.223.73:5555')
     client.start()
 
     await monitor_keyboard(client)
