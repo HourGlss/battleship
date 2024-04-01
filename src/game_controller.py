@@ -184,5 +184,5 @@ class GameController(Thread):
             current_player_sid = self.players["player2"]["sid"]
             waiting_player_sid = self.players["player1"]["sid"]
 
-        self.socketio.emit("response", {"message": "Your turn to move"}, room=current_player_sid)
+        self.socketio.emit("move_prompt", room=current_player_sid)
         self.socketio.emit("response", {"message": "Opponent's turn to move"}, room=waiting_player_sid)

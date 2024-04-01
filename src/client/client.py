@@ -83,7 +83,7 @@ class GameClientThread:
             self.stop()
 
         def on_move_prompt(data):
-            print(data)
+            print(f"\nyour move")
 
         def on_print_board(data):
             print(str(data["message"]))
