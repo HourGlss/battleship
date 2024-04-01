@@ -91,6 +91,8 @@ def handle_disconnect():
     May need some additional logic to handle disconnections
     :return:
     """
+    func = inspect.currentframe().f_back.f_code
+    logging.info(f"removing player from dictionary")
     # Remove the player from the dictionary upon disconnection
     player_sid = request.sid  # The session ID of the client
     if player_sid in players.values():
